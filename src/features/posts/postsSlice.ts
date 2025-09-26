@@ -1,5 +1,5 @@
-import { RootState } from '@/store/store';
-import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
+import { type RootState } from '@/store/store';
+import { createSlice, nanoid, type PayloadAction } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 import { userLoggedOut } from '@/features/auth/authSlice';
 
@@ -80,7 +80,7 @@ const postsSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Pass the action creator to `builder.addCase()`
-    builder.addCase(userLoggedOut, (state) => {
+    builder.addCase(userLoggedOut, () => {
       // Clear out the list of posts whenever the user logs out
       return [];
     });

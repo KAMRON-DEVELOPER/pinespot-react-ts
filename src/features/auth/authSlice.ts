@@ -1,31 +1,31 @@
-import { RootState } from '@/store/store';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { type RootState } from '@/store/store';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
-  username: string | null;
+  user: null | { id: string; name: string; email: string; avatarUrl?: string };
+  status: 'idle' | 'loading' | 'authenticated' | 'unauthenticated' | 'complete-profile';
 }
 
 const initialState: AuthState = {
-  // Note: a real app would probably have more complex auth state,
-  // but for this example we'll keep things simple
-  username: null,
+  user: null,
+  status: 'unauthenticated',
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    userLoggedIn(state, action: PayloadAction<string>) {
-      state.username = action.payload;
+    userLoggedIn(state, action: PayloadAction<AuthState['user']>) {
+      state.user = action.payload;
+      state.status = action.payload ? 'authenticated' : 'unauthenticated';
     },
-    userLoggedOut(state) {
-      state.username = null;
+    userLoggedOut: (state) => {
+      state.user = null;
+      state.status = 'unauthenticated';
     },
   },
 });
 
 export const { userLoggedIn, userLoggedOut } = authSlice.actions;
-
-export const selectCurrentUsername = (state: RootState) => state.auth.username;
-
+export const selectUser = (state: RootState) => state.auth.user;
 export default authSlice.reducer;

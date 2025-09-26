@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 
 import { userLoggedOut } from '@/features/auth/authSlice';
 import { selectCurrentUser } from '@/features/users/usersSlice';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FiUser } from 'react-icons/fi';
 
 function Navbar() {
   const dispatch = useAppDispatch();
@@ -30,7 +30,7 @@ function Navbar() {
 
           {isLoggedIn && (
             <div className='userDetails'>
-              <FontAwesomeIcon />
+              <FiUser size={36} />
               {user.name}
               <button
                 className='button small'

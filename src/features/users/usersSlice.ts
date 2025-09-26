@@ -1,5 +1,5 @@
-import { RootState } from '@/store/store';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { type RootState } from '@/store/store';
+import { createSlice } from '@reduxjs/toolkit';
 import { selectCurrentUsername } from '@/features/auth/authSlice';
 
 interface User {

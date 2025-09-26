@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { Post, postAdded } from './postsSlice';
-import { nanoid } from '@reduxjs/toolkit';
+import { postAdded } from './postsSlice';
 import { selectAllUsers } from '../users/usersSlice';
 import { selectCurrentUsername } from '../auth/authSlice';
 

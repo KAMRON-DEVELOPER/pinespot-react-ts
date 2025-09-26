@@ -9,7 +9,7 @@ export const SinglePostPage = () => {
   const { postId } = useParams();
 
   // const post = useAppSelector((state) => state.posts.find((post) => post.id === postId));
-  const post = useAppSelector((state) => selectPostById(state, postId!));
+  const post = useAppSelector((state) => selectPostById(state, postId!))!;
   const currentUsername = useAppSelector(selectCurrentUsername)!;
   const canEdit = currentUsername === post.user;
 

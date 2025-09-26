@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, RouteObject, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, type RouteObject, RouterProvider } from 'react-router-dom';
 
 import { PostsList } from '@/features/posts/PostsList';
 import RootLayout from '@/layouts/RootLayout';
@@ -30,7 +30,7 @@ function App() {
   const routes: RouteObject[] = [
     {
       path: '/',
-      element: <LoginPage />, // public login page
+      element: <LoginPage />,
     },
     {
       element: (

@@ -1,8 +1,10 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
+import { type Action, configureStore, type ThunkAction } from '@reduxjs/toolkit';
 import counterReducer from '@/features/counter/counterSlice';
 import postsReducer from '@/features/posts/postsSlice';
 import authReducer from '@/features/auth/authSlice';
 import usersReducer from '@/features/users/usersSlice';
+import userReducer from '@/features/users/usersSlice';
+// Use global process object directly
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,7 @@ export const store = configureStore({
     posts: postsReducer,
     users: usersReducer,
     auth: authReducer,
+    user: userReducer,
   },
   devTools: true,
 });

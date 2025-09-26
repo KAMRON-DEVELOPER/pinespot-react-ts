@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '@/app/hooks';
-import { RootState } from '@/store/store';
 import { selectAllPosts } from './postsSlice';
 
 export const PostsList = () => {
