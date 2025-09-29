@@ -1,75 +1,39 @@
-import { createBrowserRouter, Navigate, type RouteObject, RouterProvider } from 'react-router-dom';
-
-import { PostsList } from '@/features/posts/PostsList';
+import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-router-dom';
 import RootLayout from '@/layouts/RootLayout';
-import Counter from '@/features/counter/Counter';
 import ErrorPage from '@/components/ErrorPage';
-import AddPostForm from '@/features/posts/AddPostForm';
-import { SinglePostPage } from '@/features/posts/SinglePostPage';
-
-import { selectCurrentUsername } from '@/features/auth/authSlice';
-import { useAppSelector } from '@/app/hooks';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { LoginPage } from '@/features/auth/LoginPage';
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const username = useAppSelector(selectCurrentUsername);
-
-  if (!username) {
-    return (
-      <Navigate
-        to='/'
-        replace
-      />
-    );
-  }
-
-  return children;
-};
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ListingsPage from '@/features/listings/ListingsPage';
+import RegisterPage from '@/features/auth/RegisterPage';
 
 function App() {
   const routes: RouteObject[] = [
     {
-      path: '/',
+      element: <RootLayout />,
+      errorElement: <ErrorPage />,
+      children: [{ path: '/', element: <ListingsPage /> }],
+    },
+    {
+      path: '/login',
       element: <LoginPage />,
     },
     {
-      element: (
-        <ProtectedRoute>
-          <RootLayout />
-        </ProtectedRoute>
-      ),
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          path: '/posts',
-          element: (
-            <>
-              <AddPostForm />
-              <PostsList />
-            </>
-          ),
-          children: [
-            {
-              path: '/posts/:postId',
-              element: <SinglePostPage />,
-            },
-          ],
-        },
-        {
-          path: '/counter',
-          element: <Counter />,
-        },
-        {
-          path: '/dummy',
-          element: <h1>Dummy</h1>,
-        },
-      ],
+      path: '/register',
+      element: <RegisterPage />,
     },
   ];
 
   const router = createBrowserRouter(routes);
 
-  return <RouterProvider router={router} />;
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;

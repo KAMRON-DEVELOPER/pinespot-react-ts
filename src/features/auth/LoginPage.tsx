@@ -1,51 +1,79 @@
-import { useNavigate } from 'react-router-dom';
-
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { selectAllUsers } from '@/features/users/usersSlice';
-
-import { userLoggedIn } from './authSlice';
+import { useAppDispatch } from '@/hooks/hooks';
+import { useLoginMutation } from '../../services/auth';
+import { login } from './authSlice';
+import type { AuthResponse } from './types';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type { SerializedError } from '@reduxjs/toolkit';
 
 interface LoginPageFormFields extends HTMLFormControlsCollection {
-  username: HTMLSelectElement;
+  email: HTMLSelectElement;
+  password: HTMLSelectElement;
 }
 interface LoginPageFormElements extends HTMLFormElement {
   readonly elements: LoginPageFormFields;
 }
 
 export const LoginPage = () => {
+  const [login, { isLoading, isError, error }] = useLoginMutation();
   const dispatch = useAppDispatch();
-  const users = useAppSelector(selectAllUsers);
-  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<LoginPageFormElements>) => {
+  const handleSubmit = async (e: React.FormEvent<LoginPageFormElements>) => {
     e.preventDefault();
 
-    const username = e.currentTarget.elements.username.value;
-    dispatch(userLoggedIn(username));
-    navigate('/posts');
+    const email = e.currentTarget.elements.email.value;
+    const password = e.currentTarget.elements.password.value;
+    console.log('email: ', email);
+    console.log('password: ', password);
+
+    const result = await login({ email, password }).unwrap();
+    console.log('result: ', result);
+
+    try {
+      const result: AuthResponse = await login({ email, password }).unwrap();
+      dispatch(login(result));
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
-  const usersOptions = users.map((user) => (
-    <option
-      key={user.id}
-      value={user.id}>
-      {user.name}
-    </option>
-  ));
+  if (isLoading) return <h3>Loading...</h3>;
+
+  if (isError) {
+    if (error && 'status' in error) {
+      const fetchError = error as FetchBaseQueryError;
+      return <h3>{fetchError.status}</h3>;
+    }
+
+    if (error && 'message' in error) {
+      const serializedError = error as SerializedError;
+      return (
+        <>
+          <h3>{serializedError.message}</h3>
+          <br />
+          <h3>{serializedError.code}</h3>
+          <br />
+          <h3>{serializedError.name}</h3>
+          <br />
+          <h3>{serializedError.stack}</h3>;
+        </>
+      );
+    }
+  }
 
   return (
     <section>
-      <h2>Welcome to Tweeter!</h2>
-      <h3>Please log in:</h3>
+      <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor='username'>User:</label>
-        <select
-          id='username'
-          name='username'
-          required>
-          <option value=''></option>
-          {usersOptions}
-        </select>
+        <label htmlFor='email'>email:</label>
+        <input
+          type='text'
+          placeholder='email'
+        />
+        <label htmlFor='password'>password:</label>
+        <input
+          type='text'
+          placeholder='password'
+        />
         <button>Log In</button>
       </form>
     </section>

@@ -1,31 +1,47 @@
 import { type RootState } from '@/store/store';
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type ActionReducerMapBuilder, type PayloadAction } from '@reduxjs/toolkit';
+import type { JwtPayload, Tokens, User } from './types';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthState {
-  user: null | { id: string; name: string; email: string; avatarUrl?: string };
-  status: 'idle' | 'loading' | 'authenticated' | 'unauthenticated' | 'complete-profile';
+  tokens: Tokens | null;
+  user: User | null;
 }
 
 const initialState: AuthState = {
+  tokens: null,
   user: null,
-  status: 'unauthenticated',
 };
 
-const authSlice = createSlice({
+const slice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    userLoggedIn(state, action: PayloadAction<AuthState['user']>) {
-      state.user = action.payload;
-      state.status = action.payload ? 'authenticated' : 'unauthenticated';
+    login: (state, action: PayloadAction<AuthState>) => {
+      state = action.payload;
     },
-    userLoggedOut: (state) => {
-      state.user = null;
-      state.status = 'unauthenticated';
-    },
+    logout: () => initialState,
   },
+  extraReducers: (builder: ActionReducerMapBuilder<AuthState>) => {},
 });
 
-export const { userLoggedIn, userLoggedOut } = authSlice.actions;
+export const { login, logout } = slice.actions;
+export default slice.reducer;
+
 export const selectUser = (state: RootState) => state.auth.user;
-export default authSlice.reducer;
+export const selectIsAuthenticated = (state: RootState) => {
+  const token = state.auth.tokens?.access_token;
+  if (token != undefined) {
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      const nowTimestamp = Date.now() * 1000;
+      if (decoded.exp <= nowTimestamp) return false;
+      return true;
+    } catch (error) {
+      console.log(`Jwt decode error, :${error}`);
+      return false;
+    }
+  }
+  return false;
+};
+export const selectAccessToken = (state: RootState) => state.auth.tokens?.access_token;
