@@ -17,7 +17,7 @@ const slice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<AuthState>) => {
+    setUser: (state, action: PayloadAction<AuthState>) => {
       state = action.payload;
     },
     logout: () => initialState,
@@ -25,7 +25,7 @@ const slice = createSlice({
   // extraReducers: (builder: ActionReducerMapBuilder<AuthState>) => {},
 });
 
-export const { login, logout } = slice.actions;
+export const { setUser, logout } = slice.actions;
 export default slice.reducer;
 
 export const selectUser = (state: AppState) => state.auth.user;

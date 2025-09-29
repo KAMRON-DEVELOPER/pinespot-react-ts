@@ -1,23 +1,23 @@
-import { useLoginMutation } from '../../services/auth';
+import { useSignupMutation } from '../../services/auth';
 import type { AuthResponse } from './types';
-import { login as loginStore } from './authSlice';
+import { setUser } from './authSlice';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
 import { useAppDispatch } from '@/store/store';
 
-interface LoginPageFormFields extends HTMLFormControlsCollection {
+interface SignUpPageFormFields extends HTMLFormControlsCollection {
   email: HTMLSelectElement;
   password: HTMLSelectElement;
 }
-interface LoginPageFormElements extends HTMLFormElement {
-  readonly elements: LoginPageFormFields;
+interface SignUpPageFormElements extends HTMLFormElement {
+  readonly elements: SignUpPageFormFields;
 }
 
-export const LoginPage = () => {
-  const [login, { isLoading, isError, error }] = useLoginMutation();
+export const SignUpPage = () => {
+  const [login, { isLoading, isError, error }] = useSignupMutation();
   const dispatch = useAppDispatch();
 
-  const handleSubmit = async (e: React.FormEvent<LoginPageFormElements>) => {
+  const handleSubmit = async (e: React.FormEvent<SignUpPageFormElements>) => {
     e.preventDefault();
 
     const email = e.currentTarget.elements.email.value;
@@ -30,7 +30,7 @@ export const LoginPage = () => {
 
     try {
       const result: AuthResponse = await login({ email, password }).unwrap();
-      dispatch(loginStore(result));
+      dispatch(setUser(result));
     } catch (err) {
       console.error('Login failed:', err);
     }
@@ -62,15 +62,17 @@ export const LoginPage = () => {
 
   return (
     <section>
-      <h2>Login</h2>
+      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor='email'>email:</label>
         <input
+          id='email'
           type='text'
           placeholder='email'
         />
         <label htmlFor='password'>password:</label>
         <input
+          id='password'
           type='text'
           placeholder='password'
         />

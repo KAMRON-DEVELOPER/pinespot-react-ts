@@ -23,10 +23,9 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".", // Important: Set baseUrl to the root of your project
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"] // Match the alias defined in vite.config.ts
-      // Add paths for any other aliases you defined, e.g.:
+      "@/*": ["./src/*"]
       // "@components/*": ["./src/components/*"],
       // "@utils/*": ["./src/utils/*"]
     }

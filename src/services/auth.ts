@@ -3,17 +3,17 @@ import { api } from './api';
 
 export const authApi = api.injectEndpoints({
   endpoints: (build) => ({
-    register: build.mutation<AuthResponse, { email: string; password: string }>({
+    signup: build.mutation<AuthResponse, { email: string; password: string }>({
       query: (emailPassword) => ({
-        url: '/auth/register',
+        url: '/auth/signup',
         method: 'POST',
         body: emailPassword,
       }),
       invalidatesTags: ['Auth'],
     }),
-    login: build.mutation<AuthResponse, { email: string; password: string }>({
+    signin: build.mutation<AuthResponse, { email: string; password: string }>({
       query: (emailPassword) => ({
-        url: '/auth/login',
+        url: '/auth/signin',
         method: 'POST',
         body: emailPassword,
       }),
@@ -45,5 +45,12 @@ export const authApi = api.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useGetProfileQuery, useUpdateProfileMutation, useDeleteProfileMutation, useGetOauthUserQuery, useCompleteProfileMutation } =
-  authApi;
+export const {
+  useSigninMutation,
+  useSignupMutation,
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useDeleteProfileMutation,
+  useGetOauthUserQuery,
+  useCompleteProfileMutation,
+} = authApi;

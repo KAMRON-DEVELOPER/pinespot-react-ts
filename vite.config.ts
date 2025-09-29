@@ -2,11 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'path';
+import svgr from 'vite-plugin-svgr';
 
 // https://vite.dev/config/
 export default defineConfig({
-  logLevel: 'warn', // "info" | "warn" | "error" | "silent"
-  plugins: [react(), tailwindcss()],
+  // logLevel: 'warn', // "info" | "warn" | "error" | "silent"
+  plugins: [react(), tailwindcss(), svgr()],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
