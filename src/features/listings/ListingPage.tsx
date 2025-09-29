@@ -1,6 +1,6 @@
 import { useGetListingsQuery } from '../../services/listing';
 
-function ListingsPage() {
+function ListingPage() {
   const { data: listings, isLoading } = useGetListingsQuery();
 
   if (isLoading) return <p>Loading...</p>;
@@ -8,7 +8,7 @@ function ListingsPage() {
   return (
     <div>
       <h1>Listings</h1>
-      {listings?.map((listing) => (
+      {listings?.listings.map((listing) => (
         <div key={listing.id}>
           {listing.id} - ${listing.price}
         </div>
@@ -17,4 +17,4 @@ function ListingsPage() {
   );
 }
 
-export default ListingsPage;
+export default ListingPage;

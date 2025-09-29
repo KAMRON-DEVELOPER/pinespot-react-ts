@@ -53,3 +53,8 @@ export interface Favorite {
   created_at: string;
   updated_at: string;
 }
+
+export interface ListingResponse {
+  listings: Listing[];
+  total: number;
+}

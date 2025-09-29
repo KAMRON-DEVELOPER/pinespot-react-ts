@@ -1,9 +1,9 @@
-import { useAppDispatch } from '@/hooks/hooks';
 import { useLoginMutation } from '../../services/auth';
-import { login } from './authSlice';
 import type { AuthResponse } from './types';
+import { login as loginStore } from './authSlice';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
+import { useAppDispatch } from '@/store/store';
 
 interface LoginPageFormFields extends HTMLFormControlsCollection {
   email: HTMLSelectElement;
@@ -30,7 +30,7 @@ export const LoginPage = () => {
 
     try {
       const result: AuthResponse = await login({ email, password }).unwrap();
-      dispatch(login(result));
+      dispatch(loginStore(result));
     } catch (err) {
       console.error('Login failed:', err);
     }

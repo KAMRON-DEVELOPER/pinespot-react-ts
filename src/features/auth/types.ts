@@ -27,11 +27,6 @@ export interface JwtPayload {
   exp: number;
 }
 
-export interface AuthResponse {
-  user: User;
-  tokens: Tokens;
-}
-
 export interface OAuthUser {
   id: string;
   exp: string;
@@ -46,4 +41,9 @@ export interface OAuthUser {
   picture?: string | null;
   phone_number?: string | null;
   created_at: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  tokens: Tokens;
 }

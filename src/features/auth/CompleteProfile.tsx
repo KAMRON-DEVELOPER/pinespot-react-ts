@@ -2,7 +2,7 @@ import type { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 import { useCompleteProfileMutation, useGetOauthUserQuery } from '../../services/auth';
 import type { SerializedError } from '@reduxjs/toolkit';
 import { login } from './authSlice';
-import { useAppDispatch } from '@/hooks/hooks';
+import { useAppDispatch } from '@/store/store';
 
 interface CompleteProfileFormFields extends HTMLFormControlsCollection {
   first_name: HTMLInputElement;

@@ -1,5 +1,5 @@
-import { type RootState } from '@/store/store';
-import { createSlice, type ActionReducerMapBuilder, type PayloadAction } from '@reduxjs/toolkit';
+import type { AppState } from '@/store/store';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { JwtPayload, Tokens, User } from './types';
 import { jwtDecode } from 'jwt-decode';
 
@@ -22,14 +22,14 @@ const slice = createSlice({
     },
     logout: () => initialState,
   },
-  extraReducers: (builder: ActionReducerMapBuilder<AuthState>) => {},
+  // extraReducers: (builder: ActionReducerMapBuilder<AuthState>) => {},
 });
 
 export const { login, logout } = slice.actions;
 export default slice.reducer;
 
-export const selectUser = (state: RootState) => state.auth.user;
-export const selectIsAuthenticated = (state: RootState) => {
+export const selectUser = (state: AppState) => state.auth.user;
+export const selectIsAuthenticated = (state: AppState) => {
   const token = state.auth.tokens?.access_token;
   if (token != undefined) {
     try {
@@ -44,4 +44,4 @@ export const selectIsAuthenticated = (state: RootState) => {
   }
   return false;
 };
-export const selectAccessToken = (state: RootState) => state.auth.tokens?.access_token;
+export const selectAccessToken = (state: AppState) => state.auth.tokens?.access_token;

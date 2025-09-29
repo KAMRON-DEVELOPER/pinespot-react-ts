@@ -5,6 +5,7 @@ import { resolve } from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
+  logLevel: 'warn', // "info" | "warn" | "error" | "silent"
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
