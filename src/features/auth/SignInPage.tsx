@@ -42,29 +42,24 @@ export const SignInPage = () => {
   const googleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
+      console.log('redirect result:', result);
 
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      if (!credential) return;
-
       const user = result.user;
       const additionalUserInfo = getAdditionalUserInfo(result);
 
+      console.log('credential:', credential);
       console.log('user:', user);
       console.log('additionalUserInfo:', additionalUserInfo);
 
       const idToken = await user.getIdToken();
       console.log('Firebase ID token:', idToken);
-      // fetch("/api/login", { method: "POST", body: JSON.stringify({ idToken }) });
+      // send idToken to your backend here
     } catch (error: any) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.customData?.email;
-      const credential = GoogleAuthProvider.credentialFromError(error);
-
-      console.error('ErrorCode:', errorCode);
-      console.error('ErrorMessage:', errorMessage);
-      console.error('Email:', email);
-      console.error('Credential:', credential);
+      console.error('ErrorCode:', error.code);
+      console.error('ErrorMessage:', error.message);
+      console.error('Email:', error.customData?.email);
+      console.error('Credential:', GoogleAuthProvider.credentialFromError(error));
     }
   };
 
@@ -113,28 +108,44 @@ export const SignInPage = () => {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
-
           {isError && (
             <p className='text-red-600 text-sm mt-2'>
               {error && 'status' in error ? (error as FetchBaseQueryError).status : (error as SerializedError).message}
             </p>
           )}
-
           <div className='flex items-center my-6'>
-            <Separator className='flex-grow' />
-            <span className='mx-2 text-gray-500 text-sm'>or continue with</span>
-            <Separator className='flex-grow' />
+            <div className='flex-grow'>
+              <Separator />
+            </div>
+            <span className='mx-3 text-gray-500 text-sm whitespace-nowrap'>or continue with</span>
+            <div className='flex-grow'>
+              <Separator />
+            </div>
           </div>
 
-          <div className='flex space-x-3'>
+          <div className='flex flex-col space-y-3'>
             <Button
               onClick={googleSignIn}
               variant='outline'
-              className='flex items-center justify-center gap-2'>
+              className='w-full flex items-center justify-center gap-2'>
               <FcGoogle className='w-5 h-5' />
               Google
             </Button>
           </div>
+
+          <div className='flex flex-col space-y-3 mt-4'>
+            <Button
+              onClick={() => {
+                window.location.href = 'http://localhost:8001/api/v1/auth/google';
+              }}
+              variant='outline'
+              className='w-full flex items-center justify-center gap-2'>
+              <FcGoogle className='w-5 h-5' />
+              Backend redirect
+            </Button>
+          </div>
+
+          <div className='h-4'></div>
         </CardContent>
 
         <CardFooter className='text-center text-sm text-gray-500'>

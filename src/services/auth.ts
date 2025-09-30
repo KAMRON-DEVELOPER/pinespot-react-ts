@@ -1,4 +1,4 @@
-import type { AuthResponse, OAuthUser, User } from '../features/auth/types';
+import type { AuthResponse, OAuthUser as GoogleOAuthUser, User } from '../features/auth/types';
 import { api } from './api';
 
 export const authApi = api.injectEndpoints({
@@ -19,13 +19,13 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-    getOauthUser: build.query<OAuthUser, void>({
-      query: () => '/auth/google/me',
+    getGoogleOAuthUser: build.query<GoogleOAuthUser, void>({
+      query: () => '/auth/google',
       providesTags: ['Auth'],
     }),
     completeProfile: build.mutation<AuthResponse, FormData>({
       query: (body) => ({
-        url: '/auth/google/me',
+        url: '/auth/google',
         method: 'PATCH',
         body,
       }),
@@ -51,6 +51,6 @@ export const {
   useGetProfileQuery,
   useUpdateProfileMutation,
   useDeleteProfileMutation,
-  useGetOauthUserQuery,
+  useGetGoogleOAuthUserQuery,
   useCompleteProfileMutation,
 } = authApi;

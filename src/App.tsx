@@ -4,30 +4,21 @@ import ErrorPage from '@/components/ErrorPage';
 import { SignInPage } from '@/features/auth/SignInPage';
 import ListingPage from '@/features/listings/ListingPage';
 import { SignUpPage } from '@/features/auth/SignUpPage';
-import { GoogleOAuthProvider, useGoogleOneTapLogin } from '@react-oauth/google';
-
-function GoogleOneTapLogin() {
-  useGoogleOneTapLogin({
-    auto_select: true,
-    onSuccess: (credentialResponse) => {
-      console.log('ID token:', credentialResponse.credential);
-      // sendIdTokenToBackend(credentialResponse.credential);
-    },
-    onError: () => console.log('One Tap failed'),
-  });
-
-  return null;
-}
+import CompleteProfilePage from '@/features/auth/CompleteProfilePage';
 
 function App() {
   const routes: RouteObject[] = [
+    {
+      path: '/signup',
+      element: <SignUpPage />,
+    },
     {
       path: '/signin',
       element: <SignInPage />,
     },
     {
-      path: '/signup',
-      element: <SignUpPage />,
+      path: '/complete-profile',
+      element: <CompleteProfilePage />,
     },
     {
       element: <RootLayout />,
@@ -38,12 +29,7 @@ function App() {
 
   const router = createBrowserRouter(routes);
 
-  return (
-    // <GoogleOAuthProvider clientId='836345097998-mkn65r5bm9a41qvlpi6eus3nhi8olm9v.apps.googleusercontent.com'>
-    // {/* <GoogleOneTapLogin /> */}
-    <RouterProvider router={router} />
-    // {/* </GoogleOAuthProvider> */}
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
