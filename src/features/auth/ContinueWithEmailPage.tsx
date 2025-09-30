@@ -1,4 +1,4 @@
-import { useSigninMutation } from '../../services/auth';
+import { useContinueWithEmailMutation } from '../../services/auth';
 import type { AuthResponse } from './types';
 import { setUser } from './authSlice';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
@@ -10,56 +10,30 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Separator } from '@/components/ui/separator';
 import { FcGoogle } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
-import { getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '@/firebase/setup';
 
-interface SignInPageFormFields extends HTMLFormControlsCollection {
+interface ContinueWithEmailPageFormFields extends HTMLFormControlsCollection {
   email: HTMLInputElement;
   password: HTMLInputElement;
 }
-interface SignInPageFormElements extends HTMLFormElement {
-  readonly elements: SignInPageFormFields;
+interface ContinueWithEmailPageFormElements extends HTMLFormElement {
+  readonly elements: ContinueWithEmailPageFormFields;
 }
 
-export const SignInPage = () => {
-  const [signin, { isLoading, isError, error }] = useSigninMutation();
+export const ContinueWithEmailPage = () => {
+  const [useContinueWithEmail, { isLoading, isError, error }] = useContinueWithEmailMutation();
   const dispatch = useAppDispatch();
 
-  const handleSubmit = async (e: React.FormEvent<SignInPageFormElements>) => {
+  const handleSubmit = async (e: React.FormEvent<ContinueWithEmailPageFormElements>) => {
     e.preventDefault();
 
     const email = e.currentTarget.elements.email.value;
     const password = e.currentTarget.elements.password.value;
 
     try {
-      const result: AuthResponse = await signin({ email, password }).unwrap();
+      const result: AuthResponse = await useContinueWithEmail({ email, password }).unwrap();
       dispatch(setUser(result));
     } catch (err) {
       console.error('Login failed:', err);
-    }
-  };
-
-  const googleSignIn = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      console.log('redirect result:', result);
-
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const user = result.user;
-      const additionalUserInfo = getAdditionalUserInfo(result);
-
-      console.log('credential:', credential);
-      console.log('user:', user);
-      console.log('additionalUserInfo:', additionalUserInfo);
-
-      const idToken = await user.getIdToken();
-      console.log('Firebase ID token:', idToken);
-      // send idToken to your backend here
-    } catch (error: any) {
-      console.error('ErrorCode:', error.code);
-      console.error('ErrorMessage:', error.message);
-      console.error('Email:', error.customData?.email);
-      console.error('Credential:', GoogleAuthProvider.credentialFromError(error));
     }
   };
 
@@ -123,16 +97,6 @@ export const SignInPage = () => {
             </div>
           </div>
 
-          <div className='flex flex-col space-y-3'>
-            <Button
-              onClick={googleSignIn}
-              variant='outline'
-              className='w-full flex items-center justify-center gap-2'>
-              <FcGoogle className='w-5 h-5' />
-              Google
-            </Button>
-          </div>
-
           <div className='flex flex-col space-y-3 mt-4'>
             <Button
               onClick={() => {
@@ -141,7 +105,7 @@ export const SignInPage = () => {
               variant='outline'
               className='w-full flex items-center justify-center gap-2'>
               <FcGoogle className='w-5 h-5' />
-              Backend redirect
+              Google
             </Button>
           </div>
 

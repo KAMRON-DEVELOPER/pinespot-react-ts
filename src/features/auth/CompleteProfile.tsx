@@ -1,7 +1,7 @@
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { useCompleteProfileMutation, useGetOauthUserQuery } from '../../services/auth';
+import { useCompleteProfileMutation, useGetOAuthUserQuery } from '../../services/auth';
 import type { SerializedError } from '@reduxjs/toolkit';
-import { login } from './authSlice';
+import { setUser } from './authSlice';
 import { useAppDispatch } from '@/store/store';
 
 interface CompleteProfileFormFields extends HTMLFormControlsCollection {
@@ -17,7 +17,7 @@ interface CompleteProfileFormElements extends HTMLFormElement {
 }
 
 const CompleteProfile = () => {
-  const { data } = useGetOauthUserQuery();
+  const { data } = useGetOAuthUserQuery();
   const [complete, { isLoading, isError, error }] = useCompleteProfileMutation();
   const dispatch = useAppDispatch();
 
@@ -37,7 +37,7 @@ const CompleteProfile = () => {
 
     try {
       const result = await complete(formData).unwrap();
-      dispatch(login(result));
+      dispatch(setUser(result));
     } catch (err) {
       console.error('Complete profile failed:', err);
     }
