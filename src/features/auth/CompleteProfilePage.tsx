@@ -4,22 +4,16 @@ import { useAppDispatch } from '@/store/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FormEvent } from 'react';
 
-// interface CompleteProfileFormFields extends HTMLFormControlsCollection {
-//   full_name: HTMLInputElement;
-//   email: HTMLInputElement;
-//   phone_number: HTMLInputElement;
-//   password: HTMLInputElement;
-//   picture: HTMLInputElement;
-// }
-
-// interface CompleteProfileFormElements extends HTMLFormElement {
-//   readonly elements: CompleteProfileFormFields;
-// }
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data, isLoading, isError, isSuccess } = useGetOAuthUserQuery();
+  const { data, isLoading, isError, isSuccess, status, error } = useGetOAuthUserQuery();
   const [complete] = useCompleteProfileMutation();
 
   const [fullName, setFullName] = useState('');
@@ -47,13 +41,12 @@ const CompleteProfile = () => {
     formData.append('phone_number', phoneNumber);
     formData.append('password', password);
 
-    if (form.picture.files?.[0]) {
-      formData.append('picture', form.picture.files[0]);
+    if ((form.elements.namedItem('picture') as HTMLInputElement)?.files?.[0]) {
+      formData.append('picture', (form.elements.namedItem('picture') as HTMLInputElement).files![0]);
     }
 
     try {
       const result = await complete(formData).unwrap();
-
       if ('user' in result && 'tokens' in result) {
         dispatch(setUser(result));
         navigate('/');
@@ -65,59 +58,99 @@ const CompleteProfile = () => {
     }
   };
 
-  if (data === undefined) {
-    console.error('data is undefined');
-    return <h1>data is undefined</h1>;
-  }
-
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Something went wrong.</p>;
   if (!data) return <p>No data</p>;
 
   if ('id' in data) {
     return (
-      <div>
-        <form onSubmit={onSubmit}>
-          <input
-            id='full_name'
-            placeholder='full name'
-            defaultValue={data?.fullName || ''}
-          />
-          <input
-            id='email'
-            placeholder='email'
-            defaultValue={data?.email || ''}
-          />
-          <input
-            id='phone_number'
-            placeholder='phone number'
-            defaultValue={data?.phoneNumber || ''}
-          />
-          <input
-            id='password'
-            placeholder='••••••••'
-            defaultValue={data?.password || ''}
-          />
+      <div className='flex min-h-screen items-center justify-center bg-muted/30 p-4'>
+        <Card className='w-full max-w-md shadow-lg rounded-2xl'>
+          <CardHeader>
+            <CardTitle className='text-center text-xl font-bold'>Complete Your Profile</CardTitle>
+          </CardHeader>
+          <form onSubmit={onSubmit}>
+            <CardContent className='space-y-4'>
+              <div className='flex justify-center'>
+                <Avatar className='w-20 h-20'>
+                  <AvatarImage
+                    src={picture}
+                    alt={fullName}
+                  />
+                  <AvatarFallback>{fullName ? fullName[0] : '?'}</AvatarFallback>
+                </Avatar>
+              </div>
 
-          <input
-            id='picture'
-            type='file'
-          />
+              <div className='space-y-2'>
+                <Label htmlFor='full_name'>Full Name</Label>
+                <Input
+                  id='full_name'
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder='John Doe'
+                  required
+                />
+              </div>
 
-          {picture.length > 0 && (
-            <img
-              src={picture}
-              alt={'profile picture'}
-              style={{ width: '100px', height: '100px', borderRadius: '50%' }}
-            />
-          )}
+              <div className='space-y-2'>
+                <Label htmlFor='email'>Email</Label>
+                <Input
+                  id='email'
+                  type='email'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder='you@example.com'
+                  required
+                />
+              </div>
 
-          <button
-            type='submit'
-            disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save'}
-          </button>
-        </form>
+              <div className='space-y-2'>
+                <Label htmlFor='phone_number'>Phone Number</Label>
+                <Input
+                  id='phone_number'
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder='+1234567890'
+                />
+              </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='password'>Password</Label>
+                <Input
+                  id='password'
+                  type='password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder='••••••••'
+                  required
+                />
+              </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='picture'>Profile Picture</Label>
+                <Input
+                  id='picture'
+                  type='file'
+                  accept='image/*'
+                  onChange={(e) => {
+                    if (e.target.files?.[0]) {
+                      setPicture(URL.createObjectURL(e.target.files[0]));
+                    }
+                  }}
+                />
+              </div>
+            </CardContent>
+
+            <CardFooter>
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={isLoading}>
+                {isLoading ? 'Saving...' : 'Save Profile'}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
       </div>
     );
   } else if ('redirectTo' in data) {

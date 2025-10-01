@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { FcGoogle } from 'react-icons/fc';
+import { FcDeleteRow, FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 import type { ContinueWithEmailResponse } from '../types';
 import { useState, type FormEvent } from 'react';
@@ -61,7 +61,7 @@ export const ContinueWithEmailPage = () => {
                 type='email'
                 placeholder='you@example.com'
                 value={email}
-                onChange={(e) => setEmail(() => e.currentTarget.value)}
+                onChange={(e) => setEmail(() => e.target.value)}
                 required
               />
             </div>
@@ -77,7 +77,7 @@ export const ContinueWithEmailPage = () => {
                 type='password'
                 placeholder='••••••••'
                 value={password}
-                onChange={(e) => setPassword(() => e.currentTarget.value)}
+                onChange={(e) => setPassword(() => e.target.value)}
                 required
               />
             </div>
@@ -91,6 +91,9 @@ export const ContinueWithEmailPage = () => {
           {isError && (
             <p className='text-red-600 text-sm mt-2'>
               {error && 'status' in error ? (error as FetchBaseQueryError).status : (error as SerializedError).message}
+              {error && 'status' in error
+                ? (((error as FetchBaseQueryError).data as { error: string })['error'] as string)
+                : (error as SerializedError).message}
             </p>
           )}
           <div className='flex items-center my-6'>
@@ -111,6 +114,19 @@ export const ContinueWithEmailPage = () => {
               className='w-full flex items-center justify-center gap-2 cursor-pointer'>
               <FcGoogle className='w-5 h-5' />
               Continue with Google
+            </Button>
+
+            <Button
+              onClick={async () => {
+                try {
+                  const res = await fetch('http://localhost:8001/api/v1/logout');
+                  console.log('res is ', res);
+                } catch (e) {}
+              }}
+              variant='outline'
+              className='w-full flex items-center justify-center gap-2 cursor-pointer'>
+              <FcDeleteRow className='w-5 h-5' />
+              Remove email, google, github cookie
             </Button>
           </div>
 

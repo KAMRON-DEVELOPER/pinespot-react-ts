@@ -13,6 +13,7 @@ const baseQuery = fetchBaseQuery({
 
     return headers;
   },
+  credentials: 'include',
 });
 
 const baseQueryWithRetry = retry(baseQuery, { maxRetries: 1 });
