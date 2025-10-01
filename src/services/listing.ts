@@ -1,4 +1,4 @@
-import type { ListingResponse } from '@/features/listings/types';
+import type { ListingResponse } from '@/features/types';
 import { api } from './api';
 
 export const listingApi = api.injectEndpoints({

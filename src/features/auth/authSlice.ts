@@ -1,11 +1,11 @@
 import type { AppState } from '@/store/store';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { JwtPayload, Tokens, User } from './types';
+import type { JwtPayload, Tokens, User } from '@/features/types';
 import { jwtDecode } from 'jwt-decode';
 
 interface AuthState {
-  tokens: Tokens | null;
   user: User | null;
+  tokens: Tokens | null;
 }
 
 const initialState: AuthState = {

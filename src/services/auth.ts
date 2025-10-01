@@ -1,4 +1,4 @@
-import type { AuthResponse, OAuthUser as GoogleOAuthUser, User } from '../features/auth/types';
+import type { AuthResponse, ContinueWithEmailResponse, OAuthUser, User } from '@/features/types';
 import { api } from './api';
 
 export const authApi = api.injectEndpoints({
@@ -14,7 +14,7 @@ export const authApi = api.injectEndpoints({
       query: () => ({ url: '/profile', method: 'DELETE' }),
       invalidatesTags: ['Auth'],
     }),
-    continueWithEmail: build.mutation<AuthResponse, { email: string; password: string }>({
+    continueWithEmail: build.mutation<ContinueWithEmailResponse, { email: string; password: string }>({
       query: (body) => ({
         url: '/auth/email',
         method: 'POST',
@@ -22,7 +22,7 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-    getOAuthUser: build.query<GoogleOAuthUser, void>({
+    getOAuthUser: build.query<OAuthUser, void>({
       query: () => '/auth/user',
       providesTags: ['Auth'],
     }),

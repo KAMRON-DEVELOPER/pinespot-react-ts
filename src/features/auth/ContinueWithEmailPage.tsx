@@ -1,5 +1,4 @@
 import { useContinueWithEmailMutation } from '../../services/auth';
-import type { AuthResponse } from './types';
 import { setUser } from './authSlice';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -9,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { FcGoogle } from 'react-icons/fc';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import type { ContinueWithEmailResponse } from '../types';
 
 interface ContinueWithEmailPageFormFields extends HTMLFormControlsCollection {
   email: HTMLInputElement;
@@ -20,8 +20,9 @@ interface ContinueWithEmailPageFormElements extends HTMLFormElement {
 }
 
 export const ContinueWithEmailPage = () => {
-  const [useContinueWithEmail, { isLoading, isError, error }] = useContinueWithEmailMutation();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [useContinueWithEmail, { isLoading, isError, error }] = useContinueWithEmailMutation();
 
   const handleSubmit = async (e: React.FormEvent<ContinueWithEmailPageFormElements>) => {
     e.preventDefault();
@@ -30,8 +31,17 @@ export const ContinueWithEmailPage = () => {
     const password = e.currentTarget.elements.password.value;
 
     try {
-      const result: AuthResponse = await useContinueWithEmail({ email, password }).unwrap();
-      dispatch(setUser(result));
+      const result: ContinueWithEmailResponse = await useContinueWithEmail({ email, password }).unwrap();
+      if ('user' in result && 'tokens' in result) {
+        dispatch(setUser(result));
+        navigate('/');
+      } else if ('redirect_to' in result) {
+        if ('redirect_to' in result) {
+          navigate('/' + result.redirect_to);
+        }
+      } else if ('error' in result) {
+        console.error('Backend error:', result.error);
+      }
     } catch (err) {
       console.error('Login failed:', err);
     }
@@ -41,7 +51,7 @@ export const ContinueWithEmailPage = () => {
     <div className='flex items-center justify-center min-h-screen bg-gray-50 px-4'>
       <Card className='w-full max-w-md shadow-xl'>
         <CardHeader className='text-center'>
-          <CardTitle className='text-2xl font-bold text-gray-800'>Sign in to PineSpot</CardTitle>
+          <CardTitle className='text-2xl font-bold text-gray-800'>Welcome to PineSpot</CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -78,8 +88,8 @@ export const ContinueWithEmailPage = () => {
 
             <Button
               type='submit'
-              className='w-full bg-indigo-600 hover:bg-indigo-700'>
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              className='w-full bg-indigo-600 hover:bg-indigo-700 cursor-pointer'>
+              {isLoading ? 'Loading...' : 'Continue'}
             </Button>
           </form>
           {isError && (
@@ -96,30 +106,22 @@ export const ContinueWithEmailPage = () => {
               <Separator />
             </div>
           </div>
-
           <div className='flex flex-col space-y-3 mt-4'>
             <Button
               onClick={() => {
                 window.location.href = 'http://localhost:8001/api/v1/auth/google';
               }}
               variant='outline'
-              className='w-full flex items-center justify-center gap-2'>
+              className='w-full flex items-center justify-center gap-2 cursor-pointer'>
               <FcGoogle className='w-5 h-5' />
-              Google
+              Continue with Google
             </Button>
           </div>
 
-          <div className='h-4'></div>
+          <CardFooter className='flex flex-col mt-6 items-center'>
+            <p className='text-xs'>By continuing, you agree our terms and service</p>
+          </CardFooter>
         </CardContent>
-
-        <CardFooter className='text-center text-sm text-gray-500'>
-          Don’t have an account?{' '}
-          <Link
-            to='/signup'
-            className='text-indigo-600 hover:underline'>
-            Sign Up
-          </Link>
-        </CardFooter>
       </Card>
     </div>
   );

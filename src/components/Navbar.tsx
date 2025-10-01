@@ -4,14 +4,14 @@ import { selectIsAuthenticated, selectUser } from '@/features/auth/authSlice';
 import { Button } from '@/components/ui/button';
 
 import { LuSearch } from 'react-icons/lu';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 function NavbarSearch() {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState<string>('');
 
-  const navbar_search = (e) => {
+  const navbar_search = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
-    console.log(e.target.value);
+    console.log('Input value changed:', e.target.value);
   };
 
   return (
@@ -19,8 +19,8 @@ function NavbarSearch() {
       <div className='navbar-search'>
         <LuSearch className='navbar-search-icon' />
         <input
-          onChange={navbar_search}
           value={searchText}
+          onChange={navbar_search}
           placeholder='search'
           type='text'
           className='navbar-search-input rounded-full'
@@ -43,7 +43,7 @@ export default function Navbar() {
           PineSpot
         </Link>
 
-        <div className='flex'>
+        {/* <div className='flex'>
           <input
             type='text'
             id='simple-search'
@@ -51,6 +51,10 @@ export default function Navbar() {
             placeholder='Search branch name...'
             required
           />
+        </div> */}
+
+        <div className='flex'>
+          <NavbarSearch />
         </div>
 
         {isAuthenticated && (
@@ -103,14 +107,9 @@ export default function Navbar() {
         ) : (
           <>
             <NavLink
-              to='/signin'
-              className='px-4 py-2 rounded-md text-gray-300 hover:text-white hover:bg-indigo-600'>
-              Sign In
-            </NavLink>
-            <NavLink
-              to='/signup'
+              to='/email'
               className='px-4 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 text-white'>
-              Sign Up
+              Get started
             </NavLink>
           </>
         )}

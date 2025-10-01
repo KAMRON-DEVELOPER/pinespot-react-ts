@@ -5,10 +5,10 @@ import { setUser } from './authSlice';
 import { useAppDispatch } from '@/store/store';
 
 interface CompleteProfileFormFields extends HTMLFormControlsCollection {
-  first_name: HTMLInputElement;
-  last_name: HTMLInputElement;
+  full_name: HTMLInputElement;
   email: HTMLInputElement;
   phone_number: HTMLInputElement;
+  password: HTMLInputElement;
   picture: HTMLInputElement;
 }
 
@@ -26,9 +26,9 @@ const CompleteProfile = () => {
     const form = e.currentTarget.elements;
 
     const formData = new FormData();
-    formData.append('first_name', form.first_name.value);
-    formData.append('last_name', form.last_name.value);
+    formData.append('full_name', form.full_name.value);
     formData.append('email', form.email.value);
+    formData.append('password', form.password.value);
     formData.append('phone_number', form.phone_number.value);
 
     if (form.picture.files?.[0]) {
@@ -74,14 +74,9 @@ const CompleteProfile = () => {
     <div>
       <form onSubmit={onSubmit}>
         <input
-          id='first_name'
-          placeholder='first name'
-          defaultValue={data?.given_name || ''}
-        />
-        <input
-          id='last_name'
-          placeholder='last name'
-          defaultValue={data?.family_name || ''}
+          id='full_name'
+          placeholder='full name'
+          defaultValue={data?.full_name || ''}
         />
         <input
           id='email'
@@ -89,14 +84,14 @@ const CompleteProfile = () => {
           defaultValue={data?.email || ''}
         />
         <input
-          id='name'
-          placeholder='name'
-          defaultValue={data?.name || ''}
-        />
-        <input
           id='phone_number'
           placeholder='phone number'
           defaultValue={data?.phone_number || ''}
+        />
+        <input
+          id='password'
+          placeholder='••••••••'
+          defaultValue={data?.password || ''}
         />
         <input
           id='picture'
@@ -114,7 +109,7 @@ const CompleteProfile = () => {
       {data?.picture && (
         <img
           src={data.picture}
-          alt={`${data?.name || 'User'} profile picture`}
+          alt={`${data?.full_name || 'User'} profile picture`}
           style={{ width: '100px', height: '100px', borderRadius: '50%' }}
         />
       )}
