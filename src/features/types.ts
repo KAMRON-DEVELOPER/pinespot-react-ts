@@ -6,20 +6,20 @@ export type UserStatus = 'active' | 'disactive';
 
 export interface User {
   id: string;
-  full_name: string;
+  fullName: string;
   email: string;
-  phone_number?: string | null;
+  phoneNumber?: string | null;
   password?: string | null;
   picture?: string | null;
   role: UserRole;
   status: UserStatus;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Tokens {
-  access_token: string;
-  refresh_token?: string;
+  accessToken: string;
+  refreshToken?: string;
 }
 
 export interface JwtPayload {
@@ -32,32 +32,34 @@ export interface JwtPayload {
 export interface OAuthUser {
   id: string;
   provider: string;
-  username?: string | null;
-  full_name?: string | null;
-  email?: string | null;
-  phone_number?: string | null;
-  password?: string | null;
-  picture?: string | null;
-  created_at?: string | null;
+  username?: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  password?: string;
+  picture?: string;
+  createdAt?: string;
 }
 
 export interface AuthResponse {
   user: User;
   tokens: {
-    access_token: string;
-    refresh_token?: string;
+    accessToken: string;
+    refreshToken?: string;
   };
 }
 
 export interface RedirectResponse {
-  redirect_to: string;
+  redirectTo: string;
 }
 
 export interface ErrorResponse {
   error: string;
 }
 
+export type GetOAuthUserResponse = OAuthUser | RedirectResponse | ErrorResponse;
 export type ContinueWithEmailResponse = AuthResponse | RedirectResponse | ErrorResponse;
+export type CompleteProfileResponse = AuthResponse | ErrorResponse;
 
 // ------------------------------------------------
 // ------------- LISTINGS -------------------------
@@ -67,13 +69,13 @@ export type SaleType = 'buy' | 'rent';
 
 export interface Listing {
   id: string;
-  apartment_id: string;
-  owner_id: string;
+  apartmentId: string;
+  ownerId: string;
   price: number;
-  available_from?: string | null;
-  available_to?: string | null;
-  created_at: string;
-  updated_at: string;
+  availableFrom?: string | null;
+  availableTo?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Apartment {
@@ -83,39 +85,39 @@ export interface Apartment {
   rooms?: number | null;
   area?: number | null;
   floor?: number | null;
-  has_elevator?: boolean | null;
+  hasElevator?: boolean | null;
   condition?: ApartmentCondition | null;
-  sale_type: SaleType;
+  saleType: SaleType;
   requirements?: string | null;
-  has_garden?: boolean | null;
-  distance_to_kindergarten?: number | null;
-  distance_to_school?: number | null;
-  distance_to_hospital?: number | null;
-  created_at: string;
-  updated_at: string;
+  hasGarden?: boolean | null;
+  distanceToKindergarten?: number | null;
+  distanceToSchool?: number | null;
+  distanceToHospital?: number | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Address {
   id: string;
-  apartment_id: string;
-  street_address: string;
+  apartmentId: string;
+  streetAddress: string;
   city: string;
-  state_or_region: string;
-  county_or_district?: string | null;
-  postal_code: string;
+  stateOrRegion: string;
+  countyOrDistrict?: string | null;
+  postalCode: string;
   country: string;
   latitude?: number | null;
   longitude?: number | null;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Favorite {
   id: string;
-  user_id: string;
-  listing_id: string;
-  created_at: string;
-  updated_at: string;
+  userId: string;
+  listingId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ListingResponse {

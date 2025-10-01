@@ -1,4 +1,4 @@
-import type { AuthResponse, ContinueWithEmailResponse, OAuthUser, User } from '@/features/types';
+import type { CompleteProfileResponse, ContinueWithEmailResponse, GetOAuthUserResponse, User } from '@/features/types';
 import { api } from './api';
 
 export const authApi = api.injectEndpoints({
@@ -22,11 +22,11 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-    getOAuthUser: build.query<OAuthUser, void>({
+    getOAuthUser: build.query<GetOAuthUserResponse, void>({
       query: () => '/auth/user',
       providesTags: ['Auth'],
     }),
-    completeProfile: build.mutation<AuthResponse, FormData>({
+    completeProfile: build.mutation<CompleteProfileResponse, FormData>({
       query: (body) => ({
         url: '/auth/complete',
         method: 'PATCH',

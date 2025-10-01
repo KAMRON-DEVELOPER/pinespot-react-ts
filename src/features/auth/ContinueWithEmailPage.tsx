@@ -10,35 +10,27 @@ import { Separator } from '@/components/ui/separator';
 import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 import type { ContinueWithEmailResponse } from '../types';
-
-interface ContinueWithEmailPageFormFields extends HTMLFormControlsCollection {
-  email: HTMLInputElement;
-  password: HTMLInputElement;
-}
-interface ContinueWithEmailPageFormElements extends HTMLFormElement {
-  readonly elements: ContinueWithEmailPageFormFields;
-}
+import { useState, type FormEvent } from 'react';
 
 export const ContinueWithEmailPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [useContinueWithEmail, { isLoading, isError, error }] = useContinueWithEmailMutation();
+  const [continueWithEmail, { isLoading, isError, error }] = useContinueWithEmailMutation();
 
-  const handleSubmit = async (e: React.FormEvent<ContinueWithEmailPageFormElements>) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const email = e.currentTarget.elements.email.value;
-    const password = e.currentTarget.elements.password.value;
-
     try {
-      const result: ContinueWithEmailResponse = await useContinueWithEmail({ email, password }).unwrap();
+      const result: ContinueWithEmailResponse = await continueWithEmail({ email, password }).unwrap();
+      console.log(`result from useContinueWithEmail: ${result}`);
       if ('user' in result && 'tokens' in result) {
         dispatch(setUser(result));
         navigate('/');
-      } else if ('redirect_to' in result) {
-        if ('redirect_to' in result) {
-          navigate('/' + result.redirect_to);
-        }
+      } else if ('redirectTo' in result) {
+        navigate('/' + result.redirectTo);
       } else if ('error' in result) {
         console.error('Backend error:', result.error);
       }
@@ -68,6 +60,8 @@ export const ContinueWithEmailPage = () => {
                 id='email'
                 type='email'
                 placeholder='you@example.com'
+                value={email}
+                onChange={(e) => setEmail(() => e.currentTarget.value)}
                 required
               />
             </div>
@@ -82,6 +76,8 @@ export const ContinueWithEmailPage = () => {
                 id='password'
                 type='password'
                 placeholder='••••••••'
+                value={password}
+                onChange={(e) => setPassword(() => e.currentTarget.value)}
                 required
               />
             </div>
