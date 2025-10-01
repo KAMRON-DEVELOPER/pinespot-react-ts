@@ -48,7 +48,7 @@ const CompleteProfile = () => {
     try {
       const result = await complete(formData).unwrap();
       if ('user' in result && 'tokens' in result) {
-        dispatch(setUser(result));
+        // dispatch(setUser(result));
         navigate('/');
       } else if ('error' in result) {
         console.error('Backend error:', result.error);

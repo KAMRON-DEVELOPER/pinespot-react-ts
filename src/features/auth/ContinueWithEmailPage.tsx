@@ -27,7 +27,7 @@ export const ContinueWithEmailPage = () => {
       const result: ContinueWithEmailResponse = await continueWithEmail({ email, password }).unwrap();
       console.log(`result from useContinueWithEmail: ${result}`);
       if ('user' in result && 'tokens' in result) {
-        dispatch(setUser(result));
+        // dispatch(setUser(result));
         navigate('/');
       } else if ('redirectTo' in result) {
         navigate('/' + result.redirectTo);
