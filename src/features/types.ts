@@ -57,8 +57,8 @@ export interface ErrorResponse {
   error: string;
 }
 
-export type GetOAuthUserResponse = OAuthUser | RedirectResponse | ErrorResponse;
-export type ContinueWithEmailResponse = AuthResponse | RedirectResponse | ErrorResponse;
+export type GetOAuthUserResponse = OAuthUser | ErrorResponse | RedirectResponse;
+export type ContinueWithEmailResponse = AuthResponse | ErrorResponse | RedirectResponse;
 export type CompleteProfileResponse = AuthResponse | ErrorResponse;
 
 // ------------------------------------------------
@@ -124,3 +124,5 @@ export interface ListingResponse {
   listings: Listing[];
   total: number;
 }
+
+export type GetListingsResponse = ListingResponse | ErrorResponse | RedirectResponse;

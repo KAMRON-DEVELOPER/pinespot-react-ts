@@ -1,9 +1,9 @@
-import type { ListingResponse } from '@/features/types';
+import type { GetListingsResponse } from '@/features/types';
 import { api } from './api';
 
 export const listingApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getListings: builder.query<ListingResponse, void>({
+    getListings: builder.query<GetListingsResponse, void>({
       query: () => 'listings',
       providesTags: ['Listing'],
     }),

@@ -10,11 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
-const CompleteProfile = () => {
+const CompleteProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { data, isLoading, isError, isSuccess, status, error } = useGetOAuthUserQuery();
   const [complete] = useCompleteProfileMutation();
+
+  console.log('CompleteProfilePage is rendering...');
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -162,4 +164,4 @@ const CompleteProfile = () => {
   }
 };
 
-export default CompleteProfile;
+export default CompleteProfilePage;
