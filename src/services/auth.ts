@@ -1,4 +1,4 @@
-import type { CompleteProfileResponse, ContinueWithEmailResponse, GetOAuthUserResponse, User } from '@/features/types';
+import type { CompleteProfileResponse, ContinueWithEmailResponse, GetOAuthUserResponse, RefreshTokenResponse, User } from '@/features/types';
 import { api } from './api';
 
 export const authApi = api.injectEndpoints({
@@ -34,6 +34,12 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
+    refreshToken: build.mutation<RefreshTokenResponse, void>({
+      query: () => ({
+        url: '/auth/refresh',
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -44,4 +50,5 @@ export const {
   useDeleteProfileMutation,
   useGetOAuthUserQuery,
   useCompleteProfileMutation,
+  useRefreshTokenMutation,
 } = authApi;

@@ -1,6 +1,4 @@
 import { useCompleteProfileMutation, useGetOAuthUserQuery } from '@/services/auth';
-import { setUser } from './authSlice';
-import { useAppDispatch } from '@/store/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FormEvent } from 'react';
 
@@ -9,12 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { isErrorResponse } from '../guards';
 
 const CompleteProfilePage = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { data, isLoading, isError, isSuccess, status, error } = useGetOAuthUserQuery();
-  const [complete] = useCompleteProfileMutation();
+  const { data, isLoading, isError, isSuccess } = useGetOAuthUserQuery();
+  const [complete, { isLoading: isLoadingRequest }] = useCompleteProfileMutation();
 
   console.log('CompleteProfilePage is rendering...');
 
@@ -23,6 +22,8 @@ const CompleteProfilePage = () => {
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [picture, setPicture] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isSuccess && data && 'fullName' in data) {
@@ -36,8 +37,13 @@ const CompleteProfilePage = () => {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     const form = e.currentTarget;
     const formData = new FormData(form);
+
     formData.append('full_name', fullName);
     formData.append('email', email);
     formData.append('phone_number', phoneNumber);
@@ -50,13 +56,19 @@ const CompleteProfilePage = () => {
     try {
       const result = await complete(formData).unwrap();
       if ('user' in result && 'tokens' in result) {
-        // dispatch(setUser(result));
         navigate('/');
       } else if ('error' in result) {
         console.error('Backend error:', result.error);
       }
     } catch (err) {
       console.error('Complete profile failed:', err);
+      const error = err as FetchBaseQueryError;
+
+      if (error.data && isErrorResponse(error.data)) {
+        setErrorMessage(error.data.error);
+      } else {
+        console.log('error is ', error);
+      }
     }
   };
 
@@ -82,6 +94,12 @@ const CompleteProfilePage = () => {
                   <AvatarFallback>{fullName ? fullName[0] : '?'}</AvatarFallback>
                 </Avatar>
               </div>
+
+              {errorMessage && (
+                <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-md'>
+                  <p className='text-red-600 text-sm'>{errorMessage}</p>
+                </div>
+              )}
 
               <div className='space-y-2'>
                 <Label htmlFor='full_name'>Full Name</Label>
@@ -147,7 +165,7 @@ const CompleteProfilePage = () => {
               <Button
                 type='submit'
                 className='w-full'
-                disabled={isLoading}>
+                disabled={isLoadingRequest}>
                 {isLoading ? 'Saving...' : 'Save Profile'}
               </Button>
             </CardFooter>

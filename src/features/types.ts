@@ -60,6 +60,7 @@ export interface ErrorResponse {
 export type GetOAuthUserResponse = OAuthUser | ErrorResponse | RedirectResponse;
 export type ContinueWithEmailResponse = AuthResponse | ErrorResponse | RedirectResponse;
 export type CompleteProfileResponse = AuthResponse | ErrorResponse;
+export type RefreshTokenResponse = Tokens | ErrorResponse;
 
 // ------------------------------------------------
 // ------------- LISTINGS -------------------------

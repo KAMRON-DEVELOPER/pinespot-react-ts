@@ -4,6 +4,7 @@ import ErrorPage from '@/components/ErrorPage';
 import { ContinueWithEmailPage } from '@/features/auth/ContinueWithEmailPage';
 import ListingPage from '@/features/listings/ListingPage';
 import CompleteProfilePage from '@/features/auth/CompleteProfilePage';
+import PersistLogin from '@/layouts/PersistLogin';
 
 function App() {
   const routes: RouteObject[] = [
@@ -16,9 +17,14 @@ function App() {
       element: <CompleteProfilePage />,
     },
     {
-      element: <RootLayout />,
-      errorElement: <ErrorPage />,
-      children: [{ path: '/', element: <ListingPage /> }],
+      element: <PersistLogin />,
+      children: [
+        {
+          element: <RootLayout />,
+          errorElement: <ErrorPage />,
+          children: [{ path: '/', element: <ListingPage /> }],
+        },
+      ],
     },
   ];
 
