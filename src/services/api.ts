@@ -1,10 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { AppState } from '@/store/store';
 import { Mutex } from 'async-mutex';
-import { logout, setTokens } from '@/features/auth/authSlice';
-import type { Tokens } from '@/features/types';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001/api/v1/';
+import { logout } from '@/features/auth/authSlice';
+import { API_URL } from '@/consts';
 
 const mutex = new Mutex();
 
@@ -40,7 +38,6 @@ const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) =>
         console.log('refreshResult.error is ', refreshResult.error);
         console.log('refreshResult.meta is ', refreshResult.meta);
         if (!refreshResult.error && refreshResult.data) {
-          api.dispatch(setTokens(refreshResult.data as Tokens));
           result = await baseQuery(args, api, extraOptions);
         } else {
           console.log('Refresh token is invalid, logging out.');

@@ -5,6 +5,10 @@ import { ContinueWithEmailPage } from '@/features/auth/ContinueWithEmailPage';
 import ListingPage from '@/features/listings/ListingPage';
 import CompleteProfilePage from '@/features/auth/CompleteProfilePage';
 import PersistLogin from '@/layouts/PersistLogin';
+import NewListingPage from '@/features/listings/NewListingPage';
+import ProfilePage from '@/features/auth/ProfilePage';
+import { APIProvider } from '@vis.gl/react-google-maps';
+import { GOOGLE_MAPS_API_KEY } from '@/consts';
 
 function App() {
   const routes: RouteObject[] = [
@@ -22,7 +26,11 @@ function App() {
         {
           element: <RootLayout />,
           errorElement: <ErrorPage />,
-          children: [{ path: '/', element: <ListingPage /> }],
+          children: [
+            { path: '/', element: <ListingPage /> },
+            { path: '/listings/new', element: <NewListingPage /> },
+            { path: '/profile', element: <ProfilePage /> },
+          ],
         },
       ],
     },
@@ -30,7 +38,11 @@ function App() {
 
   const router = createBrowserRouter(routes);
 
-  return <RouterProvider router={router} />;
+  return (
+    <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+      <RouterProvider router={router} />
+    </APIProvider>
+  );
 }
 
 export default App;

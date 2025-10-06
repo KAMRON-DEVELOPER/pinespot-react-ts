@@ -1,12 +1,20 @@
-import type { CompleteProfileResponse, ContinueWithEmailResponse, GetOAuthUserResponse, RefreshTokenResponse, User } from '@/features/types';
+import type {
+  CompleteProfileResponse,
+  ContinueWithEmailResponse,
+  GetOAuthUserResponse,
+  GetUserResponse,
+  RefreshTokenResponse,
+  UpdateUserResponse,
+  User,
+} from '@/features/types';
 import { api } from './api';
 
 export const authApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getProfile: build.query<User, void>({
+    getProfile: build.query<GetUserResponse, void>({
       query: () => '/profile',
     }),
-    updateProfile: build.mutation<User, User>({
+    updateProfile: build.mutation<UpdateUserResponse, User>({
       query: (body) => ({ url: '/profile', method: 'PATCH', body: body }),
       invalidatesTags: ['Auth'],
     }),

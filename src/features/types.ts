@@ -57,6 +57,9 @@ export interface ErrorResponse {
   error: string;
 }
 
+export type GetUserResponse = User | ErrorResponse;
+export type UpdateUserResponse = User | ErrorResponse;
+export type DeleteUserResponse = User | ErrorResponse;
 export type GetOAuthUserResponse = OAuthUser | ErrorResponse | RedirectResponse;
 export type ContinueWithEmailResponse = AuthResponse | ErrorResponse | RedirectResponse;
 export type CompleteProfileResponse = AuthResponse | ErrorResponse;

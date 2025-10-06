@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { Listing } from './types';
+import type { Listing } from '../types';
 
 interface ListingState {
   listings: Listing[];

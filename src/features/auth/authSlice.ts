@@ -41,7 +41,14 @@ const slice = createSlice({
       }
     });
     builder.addMatcher(authApi.endpoints.getProfile.matchFulfilled, (state, { payload }) => {
-      state.user = payload;
+      if ('id' in payload) {
+        state.user = payload;
+      }
+    });
+    builder.addMatcher(authApi.endpoints.refreshToken.matchFulfilled, (state, { payload }) => {
+      if ('accessToken' in payload) {
+        state.tokens = payload;
+      }
     });
   },
 });
