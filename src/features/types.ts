@@ -2,7 +2,7 @@
 // --------------- USER-- -------------------------
 // ------------------------------------------------
 export type UserRole = 'admin' | 'regular';
-export type UserStatus = 'active' | 'disactive';
+export type UserStatus = 'active' | 'inactive';
 
 export interface User {
   id: string;
@@ -57,7 +57,9 @@ export interface ErrorResponse {
   error: string;
 }
 
-export type GetUserResponse = User | ErrorResponse;
+export type ApiResponse<T> = T | ErrorResponse | RedirectResponse;
+
+export type GetUserResponse = ApiResponse<User>;
 export type UpdateUserResponse = User | ErrorResponse;
 export type DeleteUserResponse = User | ErrorResponse;
 export type GetOAuthUserResponse = OAuthUser | ErrorResponse | RedirectResponse;
@@ -73,11 +75,11 @@ export type SaleType = 'buy' | 'rent';
 
 export interface Listing {
   id: string;
-  apartmentId: string;
-  ownerId: string;
+  apartment: Apartment;
+  owner: User;
   price: number;
-  availableFrom?: string | null;
-  availableTo?: string | null;
+  currency: string;
+  tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -85,15 +87,21 @@ export interface Listing {
 export interface Apartment {
   id: string;
   title: string;
+  rating?: number;
+  address: Address;
   description?: string | null;
-  rooms?: number | null;
-  area?: number | null;
-  floor?: number | null;
-  hasElevator?: boolean | null;
-  condition?: ApartmentCondition | null;
+  rooms: number;
+  beds: number;
+  baths: number;
+  images: string[];
+  amenities: string[];
+  area: number;
+  floor: number;
+  hasElevator: boolean;
+  condition: ApartmentCondition;
   saleType: SaleType;
   requirements?: string | null;
-  hasGarden?: boolean | null;
+  hasGarden: boolean;
   distanceToKindergarten?: number | null;
   distanceToSchool?: number | null;
   distanceToHospital?: number | null;
@@ -129,4 +137,9 @@ export interface ListingResponse {
   total: number;
 }
 
-export type GetListingsResponse = ListingResponse | ErrorResponse | RedirectResponse;
+export type Country = {
+  name: string;
+  code: string;
+};
+
+export type GetListingsResponse = ApiResponse<ListingResponse>;

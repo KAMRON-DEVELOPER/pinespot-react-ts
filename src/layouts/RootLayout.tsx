@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navbar/Navbar';
 import Footer from '@/components/Footer';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated } from '@/features/auth/authSlice';
 import { useGetProfileQuery } from '@/services/auth';
-import { Button } from '@/components/ui/button';
+import { ChatDrawer } from '@/components/chat/ChatDrawer';
 
 function RootLayout() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -23,12 +23,8 @@ function RootLayout() {
       <div className='footer flex-col bg-gray-950'>
         <Footer />
       </div>
-      <div>
-        <Button
-          className='absolute h-10 w-10 rounded-full right-10 bottom-10'
-          // onClick={}
-        />
-      </div>
+
+      {isAuthenticated && <ChatDrawer />}
     </div>
   );
 }

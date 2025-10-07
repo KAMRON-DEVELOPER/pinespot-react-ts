@@ -3,7 +3,7 @@
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ThemeSwitcher } from '@/components/ui/shadcn-io/theme-switcher';
+// import { ThemeSwitcher } from '@/components/ui/shadcn-io/theme-switcher';
 
 // Define the valid theme type for safety
 type Theme = 'light' | 'dark' | 'system';
@@ -19,7 +19,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <div className='flex items-center gap-2'>
+    <div className=''>
       <Button
         variant='ghost'
         size='icon'
@@ -27,11 +27,11 @@ export function ThemeToggle() {
         {currentTheme === 'dark' ? <Sun className='h-5 w-5' /> : <Moon className='h-5 w-5' />}
       </Button>
 
-      <ThemeSwitcher
+      {/* <ThemeSwitcher
         defaultValue={currentTheme}
         onChange={(value: Theme) => setTheme(value)}
         className='scale-125'
-      />
+      /> */}
     </div>
   );
 }
