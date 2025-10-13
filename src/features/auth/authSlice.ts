@@ -7,20 +7,26 @@ import { authApi } from '@/services/auth';
 interface AuthState {
   user: User | null;
   tokens: Tokens | null;
+  status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: AuthState = {
   tokens: null,
   user: null,
+  status: 'idle',
 };
 
 const slice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<AuthState>) => {
+    setAuthLoading: (state) => {
+      state.status = 'loading';
+    },
+    setUser: (state, action: PayloadAction<{ user: User; tokens: Tokens }>) => {
       state.user = action.payload.user;
       state.tokens = action.payload.tokens;
+      state.status = 'idle';
     },
     setTokens: (state, action: PayloadAction<Tokens>) => {
       state.tokens = action.payload;
@@ -53,7 +59,7 @@ const slice = createSlice({
   },
 });
 
-export const { setUser, setTokens, logout } = slice.actions;
+export const { setAuthLoading, setUser, setTokens, logout } = slice.actions;
 export default slice.reducer;
 
 export const selectUser = (state: AppState) => state.auth.user;

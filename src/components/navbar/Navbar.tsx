@@ -19,6 +19,8 @@ export default function Navbar() {
     navigate({ pathname: '/', search: p.toString() });
   };
 
+  console.log(`${user?.picture}`);
+
   return (
     <nav className='relative flex items-center justify-between px-2 md:px-6 py-2 bg-background border-b'>
       <Link

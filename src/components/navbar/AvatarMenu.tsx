@@ -36,6 +36,8 @@ export function AvatarMenu({ user }: { user: User | null }) {
 
   if (!user) return null;
 
+  console.log(`${S3_URL}/${user.picture}`);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

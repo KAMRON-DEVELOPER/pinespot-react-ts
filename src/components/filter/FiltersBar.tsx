@@ -1,103 +1,103 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef, useState } from 'react';
 
-export interface Filters {
-  minBeds: number;
-  minBaths: number;
-  maxPrice?: number;
-  sort?: 'price-asc' | 'price-desc' | 'area-desc';
-  condition?: 'new' | 'repaired' | 'old' | 'any';
-}
+export type Filters = {
+  minBeds?: number;
+  minBaths?: number;
+  maxPrice?: number | undefined;
+  sort?: string;
+  condition?: string;
+  q?: string;
+};
 
-export function FiltersBar({ value, onChange, onReset }: { value: Filters; onChange: (v: Filters) => void; onReset: () => void }) {
-  const set = (patch: Partial<Filters>) => onChange({ ...value, ...patch });
+type Props = {
+  value: Filters;
+  onChange: (v: Filters) => void;
+  onReset?: () => void;
+};
+
+export default function FiltersBar({ value, onChange, onReset }: Props) {
+  const [localQ, setLocalQ] = useState(value.q ?? '');
+  const debounceRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // keep localQ in sync if parent changes (e.g. when URL changes programmatically)
+    setLocalQ(value.q ?? '');
+  }, [value.q]);
+
+  // debounce commit function
+  useEffect(() => {
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = window.setTimeout(() => {
+      if ((value.q ?? '') !== localQ) {
+        onChange({ ...value, q: localQ.trim() ? localQ.trim() : undefined });
+      }
+    }, 450);
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+    // intentionally listen to localQ only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localQ]);
+
+  const handleNumericChange = (k: keyof Filters, raw: string) => {
+    const v = raw === '' ? undefined : Number(raw);
+    onChange({ ...value, [k]: v });
+  };
+
   return (
-    <div className='flex flex-wrap items-end gap-3 rounded-lg border bg-card p-3'>
-      <div className='w-[140px]'>
-        <label className='mb-1 block text-xs text-muted-foreground'>Condition</label>
-        <Select
-          value={value.condition ?? 'any'}
-          onValueChange={(v) => set({ condition: v as Filters['condition'] })}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='any'>Any</SelectItem>
-            <SelectItem value='new'>New</SelectItem>
-            <SelectItem value='repaired'>Repaired</SelectItem>
-            <SelectItem value='old'>Old</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className='w-[120px]'>
-        <label className='mb-1 block text-xs text-muted-foreground'>Beds</label>
-        <Select
-          value={String(value.minBeds)}
-          onValueChange={(v) => set({ minBeds: Number(v) })}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='0'>Any</SelectItem>
-            <SelectItem value='1'>1+ beds</SelectItem>
-            <SelectItem value='2'>2+ beds</SelectItem>
-            <SelectItem value='3'>3+ beds</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className='w-[120px]'>
-        <label className='mb-1 block text-xs text-muted-foreground'>Baths</label>
-        <Select
-          value={String(value.minBaths)}
-          onValueChange={(v) => set({ minBaths: Number(v) })}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='0'>Any</SelectItem>
-            <SelectItem value='1'>1+ baths</SelectItem>
-            <SelectItem value='2'>2+ baths</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className='w-[160px]'>
-        <label className='mb-1 block text-xs text-muted-foreground'>Max price</label>
-        <Input
-          type='number'
-          min={0}
-          step={100}
-          value={value.maxPrice ?? ''}
-          onChange={(e) => set({ maxPrice: e.target.value ? Number(e.target.value) : undefined })}
-          placeholder='Any'
+    <div className='flex flex-col md:flex-row items-start md:items-center gap-3 mb-4'>
+      <div className='flex-1 min-w-0'>
+        <input
+          aria-label='Search listings'
+          placeholder='Search location, title, features...'
+          value={localQ}
+          onChange={(e) => setLocalQ(e.target.value)}
+          className='w-full px-3 py-2 border rounded-md'
         />
       </div>
 
-      <div className='w-[180px]'>
-        <label className='mb-1 block text-xs text-muted-foreground'>Sort</label>
-        <Select
+      <div className='flex gap-2'>
+        <input
+          aria-label='Min beds'
+          type='number'
+          placeholder='Min beds'
+          value={value.minBeds ?? ''}
+          onChange={(e) => handleNumericChange('minBeds', e.target.value)}
+          className='w-20 px-2 py-2 border rounded-md'
+        />
+        <input
+          aria-label='Min baths'
+          type='number'
+          placeholder='Min baths'
+          value={value.minBaths ?? ''}
+          onChange={(e) => handleNumericChange('minBaths', e.target.value)}
+          className='w-20 px-2 py-2 border rounded-md'
+        />
+        <input
+          aria-label='Max price'
+          type='number'
+          placeholder='Max price'
+          value={value.maxPrice ?? ''}
+          onChange={(e) => handleNumericChange('maxPrice', e.target.value)}
+          className='w-28 px-2 py-2 border rounded-md'
+        />
+        <select
+          aria-label='Sort'
           value={value.sort ?? 'price-asc'}
-          onValueChange={(v) => set({ sort: v as Filters['sort'] })}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='price-asc'>Price: Low to High</SelectItem>
-            <SelectItem value='price-desc'>Price: High to Low</SelectItem>
-            <SelectItem value='area-desc'>Largest Area</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className='ml-auto'>
-        <Button
-          variant='secondary'
-          onClick={onReset}>
+          onChange={(e) => onChange({ ...value, sort: e.target.value })}
+          className='px-2 py-2 border rounded-md'>
+          <option value='price-asc'>Price ↑</option>
+          <option value='price-desc'>Price ↓</option>
+          <option value='newest'>Newest</option>
+        </select>
+        <button
+          onClick={() => onReset && onReset()}
+          className='px-3 py-2 bg-gray-100 rounded-md'
+          aria-label='Reset filters'>
           Reset
-        </Button>
+        </button>
       </div>
     </div>
   );
