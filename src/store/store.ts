@@ -2,16 +2,16 @@ import { type Action, configureStore, type ThunkAction } from '@reduxjs/toolkit'
 import auth from '@/features/auth/authSlice';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { api } from '@/services/api';
+import stats from '@/features/listings/statsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
     auth,
+    stats,
   },
-  middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat([api.middleware]);
-  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([api.middleware]),
   devTools: true,
 });
 

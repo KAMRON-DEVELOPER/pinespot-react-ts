@@ -7,6 +7,7 @@ export interface Filters {
   minBaths: number;
   maxPrice?: number;
   sort?: 'price-asc' | 'price-desc' | 'area-desc';
+  condition?: 'new' | 'repaired' | 'old' | 'any';
 }
 
 export function FiltersBar({ value, onChange, onReset }: { value: Filters; onChange: (v: Filters) => void; onReset: () => void }) {
@@ -14,6 +15,23 @@ export function FiltersBar({ value, onChange, onReset }: { value: Filters; onCha
   return (
     <div className='flex flex-wrap items-end gap-3 rounded-lg border bg-card p-3'>
       <div className='w-[140px]'>
+        <label className='mb-1 block text-xs text-muted-foreground'>Condition</label>
+        <Select
+          value={value.condition ?? 'any'}
+          onValueChange={(v) => set({ condition: v as Filters['condition'] })}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='any'>Any</SelectItem>
+            <SelectItem value='new'>New</SelectItem>
+            <SelectItem value='repaired'>Repaired</SelectItem>
+            <SelectItem value='old'>Old</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className='w-[120px]'>
         <label className='mb-1 block text-xs text-muted-foreground'>Beds</label>
         <Select
           value={String(value.minBeds)}
@@ -29,7 +47,8 @@ export function FiltersBar({ value, onChange, onReset }: { value: Filters; onCha
           </SelectContent>
         </Select>
       </div>
-      <div className='w-[140px]'>
+
+      <div className='w-[120px]'>
         <label className='mb-1 block text-xs text-muted-foreground'>Baths</label>
         <Select
           value={String(value.minBaths)}
@@ -44,6 +63,7 @@ export function FiltersBar({ value, onChange, onReset }: { value: Filters; onCha
           </SelectContent>
         </Select>
       </div>
+
       <div className='w-[160px]'>
         <label className='mb-1 block text-xs text-muted-foreground'>Max price</label>
         <Input
@@ -55,6 +75,7 @@ export function FiltersBar({ value, onChange, onReset }: { value: Filters; onCha
           placeholder='Any'
         />
       </div>
+
       <div className='w-[180px]'>
         <label className='mb-1 block text-xs text-muted-foreground'>Sort</label>
         <Select
@@ -70,6 +91,7 @@ export function FiltersBar({ value, onChange, onReset }: { value: Filters; onCha
           </SelectContent>
         </Select>
       </div>
+
       <div className='ml-auto'>
         <Button
           variant='secondary'

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, Settings, User as UserIcon, Plus, Heart, MessageCircle } from 'lucide-react';
+import { LogOut, Settings, User as UserIcon, Heart, MessageCircle } from 'lucide-react';
 
 import { useAppDispatch } from '@/store/store';
 import { logout } from '@/features/auth/authSlice';
@@ -39,9 +39,9 @@ export function AvatarMenu({ user }: { user: User | null }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className='relative h-9 w-9 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
+        <Avatar className='relative h-9 w-9 cursor-pointer border-1 border-black dark:border-white'>
           <AvatarImage
-            src={user.picture ? `${S3_URL}/${user.picture}` : undefined}
+            src={`${S3_URL}/${user.picture}`}
             alt={'User Avatar'}
             className='object-cover'
           />

@@ -1,10 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetListingsQuery } from '@/services/listing';
 import { isListingResponse } from '@/features/guards';
-import type { Listing } from '../types';
 import { FiltersBar, type Filters } from '@/components/filter/FiltersBar';
 import { ListingCard } from '@/components/listings/ListingCard';
+import { motion, animate } from 'framer-motion';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectStats, setStats } from './statsSlice';
+import type { Listing } from '../types';
 
 function useFilters(listings: Listing[]) {
   const [params] = useSearchParams();
@@ -14,44 +17,50 @@ function useFilters(listings: Listing[]) {
   const minBaths = Number(params.get('minBaths') || 0);
   const maxPrice = params.get('maxPrice') ? Number(params.get('maxPrice')) : undefined;
   const sort = (params.get('sort') as Filters['sort']) || 'price-asc';
+  const condition = (params.get('condition') as Filters['condition']) || 'any';
+
   const filtered = useMemo(() => {
-    const items = listings.filter((l) => {
+    return listings.filter((l) => {
       const matchCountry = country === 'all' || l.apartment.address.country === country;
-      const matchQ =
-        !q || [l.apartment.title, l.apartment.address, l.apartment.address.city, l.tags?.join(' ')].filter(Boolean).join(' ').toLowerCase().includes(q);
+      const matchQ = !q || l.apartment.title.toLowerCase().includes(q);
       const matchBeds = l.apartment.beds >= minBeds;
       const matchBaths = l.apartment.baths >= minBaths;
       const matchPrice = maxPrice ? l.price <= maxPrice : true;
-      return matchCountry && matchQ && matchBeds && matchBaths && matchPrice;
+      const matchCondition = condition === 'any' || l.apartment.condition === condition;
+      return matchCountry && matchQ && matchBeds && matchBaths && matchPrice && matchCondition;
     });
-    const sorted = [...items].sort((a, b) => {
-      if (sort === 'price-asc') return a.price - b.price;
-      if (sort === 'price-desc') return b.price - a.price;
-      if (sort === 'area-desc') return b.apartment.area - a.apartment.area;
-      return 0;
-    });
-    return sorted;
-  }, [listings, q, country, minBeds, minBaths, maxPrice, sort]);
-  return { filtered, q, country, minBeds, minBaths, maxPrice, sort };
+  }, [listings, q, country, minBeds, minBaths, maxPrice, condition]);
+  return { filtered, q, country, minBeds, minBaths, maxPrice, sort, condition };
 }
 
-function ListingPage() {
+export default function ListingPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { data: listings, isLoading } = useGetListingsQuery();
+  const dispatch = useDispatch();
+  const stats = useSelector(selectStats);
 
-  const { filtered, q, country, minBeds, minBaths, maxPrice, sort } = useFilters(listings && isListingResponse(listings) ? listings.listings : []);
+  const { filtered, q, country, minBeds, minBaths, maxPrice, sort, condition } = useFilters(listings && isListingResponse(listings) ? listings.listings : []);
 
+  // Update stats after response
   useEffect(() => {
-    if (listings && 'redirectTo' in listings) {
-      navigate('/' + listings.redirectTo);
+    if (listings && isListingResponse(listings)) {
+      dispatch(setStats({ users: 28120, listings: listings.listings.length }));
     }
-  }, [listings, navigate]);
+  }, [listings, dispatch]);
 
-  // Early returns AFTER all hooks
-  if (isLoading) return <p>Loading...</p>;
-  if (!listings || !isListingResponse(listings)) return <p>No listings available</p>;
-  if ('error' in listings) return <p>Error: {listings.error as string}</p>;
+  const [usersDisplay, setUsersDisplay] = useState(stats.users);
+  const [listingsDisplay, setListingsDisplay] = useState(stats.listings);
+  useEffect(() => {
+    animate(usersDisplay, stats.users, {
+      duration: 1.2,
+      onUpdate: (v) => setUsersDisplay(Math.round(v)),
+    });
+    animate(listingsDisplay, stats.listings, {
+      duration: 1.2,
+      onUpdate: (v) => setListingsDisplay(Math.round(v)),
+    });
+  }, [stats]);
 
   const setParam = (key: string, value?: string) => {
     const p = new URLSearchParams(params);
@@ -60,48 +69,51 @@ function ListingPage() {
     navigate({ pathname: '/', search: p.toString() });
   };
 
+  if (isLoading) return <p>Loading...</p>;
+  if (!listings || !isListingResponse(listings)) return <p>No listings available</p>;
+
   return (
     <div className='px-2 md:px-6 py-2 md:pt-6 space-y-6'>
       {/* Hero */}
-      <section className='flex flex-col md:flex-row gap-x-6'>
-        <div className='flex flex-col justify-center order-last md:order-first space-y-4'>
-          {/* marketing text */}
-          <h1 className='text-md md:text-4xl font-extrabold tracking-tight sm:text-5xl'>Beautiful apartments, curated for modern living</h1>
-          <p className='text-sm md:text-lg text-muted-foreground'>
-            Discover hand-picked rentals across the globe. Compare prices, amenities, and neighborhoods — all in one place.
-          </p>
-
-          {/* stats */}
-          <div className='flex justify-around'>
-            <div className='flex flex-col items-center text-lg md:text-2xl font-bold'>
-              <p>Total users</p>
-              <p>28,120</p>
-            </div>
-            <div className='flex flex-col items-center text-lg md:text-2xl font-bold'>
-              <p>Total listings</p>
-              <p>892</p>
-            </div>
-          </div>
-        </div>
+      <section className='flex flex-col md:flex-row gap-6 items-center'>
         <img
           src='src/assets/h1.jpg'
           alt='Apartments'
-          className='h-full w-full object-cover rounded-2xl'
+          className='h-52 md:h-80 w-full md:w-1/2 object-cover rounded-2xl order-first md:order-last'
         />
+        <div className='flex flex-col justify-center space-y-4 text-center md:text-left'>
+          <h1 className='text-lg md:text-4xl font-extrabold tracking-tight sm:text-5xl leading-tight'>Beautiful apartments, curated for modern living</h1>
+          <p className='text-sm md:text-lg text-muted-foreground max-w-lg mx-auto md:mx-0'>
+            Discover hand-picked rentals across the globe. Compare prices, amenities, and neighborhoods — all in one place.
+          </p>
+
+          {/* Animated stats */}
+          <div className='flex justify-center md:justify-start gap-10 pt-2'>
+            <div className='flex flex-col items-center md:items-start'>
+              <p className='text-xs md:text-sm text-muted-foreground'>Total users</p>
+              <motion.p className='text-xl md:text-3xl font-bold'>{usersDisplay}</motion.p>
+            </div>
+            <div className='flex flex-col items-center md:items-start'>
+              <p className='text-xs md:text-sm text-muted-foreground'>Total listings</p>
+              <motion.p className='text-xl md:text-3xl font-bold'>{listingsDisplay}</motion.p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* filter */}
+      {/* Filters */}
       <FiltersBar
-        value={{ minBeds, minBaths, maxPrice, sort }}
+        value={{ minBeds, minBaths, maxPrice, sort, condition }}
         onChange={(v) => {
           setParam('minBeds', String(v.minBeds));
           setParam('minBaths', String(v.minBaths));
           setParam('maxPrice', v.maxPrice !== undefined ? String(v.maxPrice) : undefined);
           setParam('sort', v.sort);
+          setParam('condition', v.condition);
         }}
         onReset={() => {
           const p = new URLSearchParams(params);
-          ['minBeds', 'minBaths', 'maxPrice', 'sort'].forEach((k) => p.delete(k));
+          ['minBeds', 'minBaths', 'maxPrice', 'sort', 'condition'].forEach((k) => p.delete(k));
           navigate({ pathname: '/', search: p.toString() });
         }}
       />
@@ -115,6 +127,7 @@ function ListingPage() {
           {country && country !== 'all' && <p className='text-sm text-muted-foreground'>Country: {country}</p>}
         </div>
       </div>
+
       <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
         {filtered.map((l) => (
           <ListingCard
@@ -126,5 +139,3 @@ function ListingPage() {
     </div>
   );
 }
-
-export default ListingPage;
