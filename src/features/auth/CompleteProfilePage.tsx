@@ -15,8 +15,6 @@ const CompleteProfilePage = () => {
   const { data, isLoading, isError, isSuccess } = useGetOAuthUserQuery();
   const [complete, { isLoading: isLoadingRequest }] = useCompleteProfileMutation();
 
-  console.log('CompleteProfilePage is rendering...');
-
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

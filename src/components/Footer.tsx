@@ -1,10 +1,34 @@
+import { Link } from 'react-router-dom';
+
 function Footer() {
   return (
-    <footer>
-      <div className='flex flex-col justify-center items-center py-4'>
-        <h1 className='leading-loose text-sm'>All Rights Reserved</h1>
-        <h1 className='leading-loose text-sm'>Copyright © 2024</h1>
-        <h1 className='leading-loose text-sm'>Developed by Kamronbek</h1>
+    <footer className='flex flex-col md:flex-row justify-between items-center px-6 py-4'>
+      <Link
+        className='link link-hover font-medium'
+        to='#'>
+        &copy;2025 PineSpot
+      </Link>
+      <div className='flex flex-col md:flex-row md:space-x-4'>
+        <Link
+          className='link link-hover'
+          to='/'>
+          License
+        </Link>
+        <Link
+          className='link link-hover'
+          to='/help'>
+          Help
+        </Link>
+        <Link
+          className='link link-hover'
+          to='/contact'>
+          Contact
+        </Link>
+        <Link
+          className='link link-hover'
+          to='/policy'>
+          Policy
+        </Link>
       </div>
     </footer>
   );

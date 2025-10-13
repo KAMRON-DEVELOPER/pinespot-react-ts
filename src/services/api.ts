@@ -10,7 +10,6 @@ const baseQuery = fetchBaseQuery({
   baseUrl: `${API_URL}`,
   prepareHeaders(headers, { getState }) {
     const token = (getState() as AppState).auth.tokens?.accessToken;
-    console.log('accessToken is ', token);
 
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
@@ -24,9 +23,6 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) => {
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
-  console.log('result.data is ', result.data);
-  console.log('result.error is ', result.error);
-  console.log('result.meta is ', result.meta);
 
   if (result.error && result.error.status === 401) {
     if (!mutex.isLocked()) {
@@ -34,9 +30,6 @@ const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) =>
 
       try {
         const refreshResult = await baseQuery({ url: '/auth/refresh', method: 'POST' }, api, extraOptions);
-        console.log('refreshResult.data is ', refreshResult.data);
-        console.log('refreshResult.error is ', refreshResult.error);
-        console.log('refreshResult.meta is ', refreshResult.meta);
         if (!refreshResult.error && refreshResult.data) {
           result = await baseQuery(args, api, extraOptions);
         } else {

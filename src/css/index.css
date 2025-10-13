@@ -118,6 +118,14 @@
     @apply border-border outline-ring/50;
   }
 
+  button:focus-visible {
+    outline: none;
+  }
+
+  button:hover {
+    cursor: pointer;
+  }
+
   body,
   html {
     margin: 0;

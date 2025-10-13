@@ -35,13 +35,13 @@ const CountrySelector = () => {
       </button>
 
       {open && (
-        <div className='absolute z-50 mt-2 w-64 bg-popover text-popover-foreground rounded-xl shadow-md border border-border p-2'>
+        <div className='absolute z-50 mt-4 right-0 w-64 bg-popover text-popover-foreground rounded-xl shadow-md border border-border p-2'>
           <Input
             type='text'
             placeholder='Search country...'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className='mb-2 focus-visible:ring-1 focus-visible:ring-primary'
+            className='mb-2 focus-visible:ring-0 focus-visible:ring-primary'
           />
           <div className='max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-border'>
             {filteredCountries.map((country) => (
@@ -55,7 +55,7 @@ const CountrySelector = () => {
                 className={`px-2 py-1 flex items-center gap-2 rounded-md cursor-pointer hover:bg-accent hover:text-accent-foreground ${
                   selected === country.name ? 'bg-accent text-accent-foreground' : ''
                 }`}>
-                <span className={`fi fi-${country.code.toLowerCase()}`} />
+                <span className={`fi fi-${country.code.toLowerCase()} rounded-xs`} />
                 {country.name}
               </div>
             ))}

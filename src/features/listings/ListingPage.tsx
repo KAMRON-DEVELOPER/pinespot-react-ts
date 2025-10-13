@@ -2,9 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetListingsQuery } from '@/services/listing';
 import { isListingResponse } from '@/features/guards';
-import MapSearchDialog from './MapSearchDialog';
-import Search from './Search';
-import { Card } from '@/components/ui/card';
 import type { Listing } from '../types';
 import { FiltersBar, type Filters } from '@/components/filter/FiltersBar';
 import { ListingCard } from '@/components/listings/ListingCard';
@@ -43,7 +40,6 @@ function ListingPage() {
   const [params] = useSearchParams();
   const { data: listings, isLoading } = useGetListingsQuery();
 
-  // Call useFilters with empty array when loading to maintain hook order
   const { filtered, q, country, minBeds, minBaths, maxPrice, sort } = useFilters(listings && isListingResponse(listings) ? listings.listings : []);
 
   useEffect(() => {
@@ -65,103 +61,68 @@ function ListingPage() {
   };
 
   return (
-    <div className=''>
+    <div className='px-2 md:px-6 py-2 md:pt-6 space-y-6'>
       {/* Hero */}
-      <section className='relative overflow-hidden'>
-        <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_-50%,hsl(var(--primary)/0.25),transparent_60%)]' />
-        <div className='container grid gap-8 py-14 md:grid-cols-2 md:gap-12 md:py-20'>
-          <div className='space-y-6'>
-            <div className='inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur'>
-              <div className='h-2 w-2 rounded-full bg-primary' /> Find your next home
+      <section className='flex flex-col md:flex-row gap-x-6'>
+        <div className='flex flex-col justify-center order-last md:order-first space-y-4'>
+          {/* marketing text */}
+          <h1 className='text-md md:text-4xl font-extrabold tracking-tight sm:text-5xl'>Beautiful apartments, curated for modern living</h1>
+          <p className='text-sm md:text-lg text-muted-foreground'>
+            Discover hand-picked rentals across the globe. Compare prices, amenities, and neighborhoods — all in one place.
+          </p>
+
+          {/* stats */}
+          <div className='flex justify-around'>
+            <div className='flex flex-col items-center text-lg md:text-2xl font-bold'>
+              <p>Total users</p>
+              <p>28,120</p>
             </div>
-            <h1 className='text-4xl font-extrabold tracking-tight sm:text-5xl'>Beautiful apartments, curated for modern living</h1>
-            <p className='text-lg text-muted-foreground'>
-              Discover hand-picked rentals across the globe. Compare prices, amenities, and neighborhoods — all in one place.
-            </p>
-            <div className='grid grid-cols-3 gap-3'>
-              {(() => {
-                const total = 192;
-                const avg = 400;
-                const cities = 18;
-                return (
-                  <>
-                    <Card className='p-4'>
-                      <div className='text-xs text-muted-foreground'>Listings</div>
-                      <div className='text-2xl font-bold'>{total}</div>
-                    </Card>
-                    <Card className='p-4'>
-                      <div className='text-xs text-muted-foreground'>Avg price</div>
-                      <div className='text-2xl font-bold'>${avg.toLocaleString()}</div>
-                    </Card>
-                    <Card className='p-4'>
-                      <div className='text-xs text-muted-foreground'>Cities</div>
-                      <div className='text-2xl font-bold'>{cities}</div>
-                    </Card>
-                  </>
-                );
-              })()}
+            <div className='flex flex-col items-center text-lg md:text-2xl font-bold'>
+              <p>Total listings</p>
+              <p>892</p>
             </div>
-          </div>
-          <div className='relative order-first aspect-[4/3] overflow-hidden rounded-xl bg-muted md:order-none'>
-            <img
-              src='/placeholder.svg'
-              alt='Apartments'
-              className='h-full w-full object-cover'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-background/60 to-transparent' />
           </div>
         </div>
+        <img
+          src='src/assets/h1.jpg'
+          alt='Apartments'
+          className='h-full w-full object-cover rounded-2xl'
+        />
       </section>
 
-      {/* <Search /> */}
-      {/* <MapSearchDialog onSearch={handleSearch} /> */}
-      {listings.listings.map((listing) => (
-        <div
-          key={listing.id}
-          className='bg-white rounded-lg shadow-md overflow-hidden'>
-          <div className='p-4'>
-            <h2 className='font-semibold text-lg'>{listing.apartment.id}</h2>
-            <p className='text-gray-600'>${listing.price}</p>
-            <p className='text-sm text-gray-400'>Created: {new Date(listing.createdAt).toLocaleDateString()}</p>
-          </div>
-        </div>
-      ))}
+      {/* filter */}
+      <FiltersBar
+        value={{ minBeds, minBaths, maxPrice, sort }}
+        onChange={(v) => {
+          setParam('minBeds', String(v.minBeds));
+          setParam('minBaths', String(v.minBaths));
+          setParam('maxPrice', v.maxPrice !== undefined ? String(v.maxPrice) : undefined);
+          setParam('sort', v.sort);
+        }}
+        onReset={() => {
+          const p = new URLSearchParams(params);
+          ['minBeds', 'minBaths', 'maxPrice', 'sort'].forEach((k) => p.delete(k));
+          navigate({ pathname: '/', search: p.toString() });
+        }}
+      />
 
       {/* Results */}
-      <section className='container pb-16'>
-        <div className='mb-4'>
-          <FiltersBar
-            value={{ minBeds, minBaths, maxPrice, sort }}
-            onChange={(v) => {
-              setParam('minBeds', String(v.minBeds));
-              setParam('minBaths', String(v.minBaths));
-              setParam('maxPrice', v.maxPrice !== undefined ? String(v.maxPrice) : undefined);
-              setParam('sort', v.sort);
-            }}
-            onReset={() => {
-              const p = new URLSearchParams(params);
-              ['minBeds', 'minBaths', 'maxPrice', 'sort'].forEach((k) => p.delete(k));
-              navigate({ pathname: '/', search: p.toString() });
-            }}
+      <div className='flex items-center justify-between'>
+        <div>
+          <h2 className='text-xl font-semibold'>
+            {filtered.length} apartments {q && <span className='text-muted-foreground'>for "{q}"</span>}
+          </h2>
+          {country && country !== 'all' && <p className='text-sm text-muted-foreground'>Country: {country}</p>}
+        </div>
+      </div>
+      <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+        {filtered.map((l) => (
+          <ListingCard
+            key={l.id}
+            listing={l}
           />
-        </div>
-        <div className='mb-6 flex items-center justify-between'>
-          <div>
-            <h2 className='text-xl font-semibold'>
-              {filtered.length} apartments {q && <span className='text-muted-foreground'>for "{q}"</span>}
-            </h2>
-            {country && country !== 'all' && <p className='text-sm text-muted-foreground'>Country: {country}</p>}
-          </div>
-        </div>
-        <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {filtered.map((l) => (
-            <ListingCard
-              key={l.id}
-              listing={l}
-            />
-          ))}
-        </div>
-      </section>
+        ))}
+      </div>
     </div>
   );
 }
