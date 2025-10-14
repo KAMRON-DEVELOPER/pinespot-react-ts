@@ -3,7 +3,7 @@ import { api } from './api';
 
 export const listingApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getListings: builder.query<GetListingsResponse, Record<string, string> | void>({
+    getListings: builder.query<GetListingsResponse, Record<string, string | number | undefined> | void>({
       query: (params) => {
         const qs = new URLSearchParams();
         if (params) {

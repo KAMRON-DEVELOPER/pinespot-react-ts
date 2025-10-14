@@ -22,19 +22,8 @@ export default function ListingPage() {
     };
   }, [params]);
 
-  const queryParams = useMemo(() => {
-    const q: Record<string, string> = {};
-    if (filters.minBeds) q.minBeds = String(filters.minBeds);
-    if (filters.minBaths) q.minBaths = String(filters.minBaths);
-    if (filters.maxPrice !== undefined) q.maxPrice = String(filters.maxPrice);
-    if (filters.sort) q.sort = filters.sort;
-    if (filters.condition) q.condition = filters.condition;
-    if (filters.q) q.q = filters.q;
-    return q;
-  }, [filters]);
-
   // This query will automatically refetch when the `filters` object changes
-  const { data, isLoading, isError } = useGetListingsQuery(queryParams);
+  const { data, isLoading, isError } = useGetListingsQuery(filters);
 
   const handleFilterChange = (v: Filters) => {
     const p = new URLSearchParams(params);
