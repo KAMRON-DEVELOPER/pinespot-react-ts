@@ -13,10 +13,10 @@ export default function ListingPage() {
   // 1. Parse all params to filters with stable defaults
   const filters = useMemo<Filters>(() => {
     return {
-      minBeds: Number(params.get('minBeds') ?? 0),
-      minBaths: Number(params.get('minBaths') ?? 0),
+      minBeds: Number(params.get('minBeds')),
+      minBaths: Number(params.get('minBaths')),
       maxPrice: params.get('maxPrice') ? Number(params.get('maxPrice')) : undefined,
-      sort: (params.get('sort') as Filters['sort']) ?? 'price-asc',
+      sort: (params.get('sort') as Filters['sort']) ?? 'newest',
       condition: (params.get('condition') as Filters['condition']) ?? 'any',
       q: params.get('q') ?? '',
     };
@@ -79,12 +79,12 @@ export default function ListingPage() {
 
   const { listings, total } = data;
   const hasActiveFilters =
-    filters.minBeds > 0 ||
-    filters.minBaths > 0 ||
+    filters.minBeds !== undefined ||
+    filters.minBaths !== undefined ||
     filters.maxPrice !== undefined ||
     filters.q !== '' ||
     filters.condition !== 'any' ||
-    filters.sort !== 'price-asc';
+    filters.sort !== 'newest';
 
   return (
     <div className='px-2 md:px-6 py-2 md:pt-6 space-y-6'>

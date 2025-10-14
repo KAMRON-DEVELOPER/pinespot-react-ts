@@ -18,7 +18,7 @@ export const listingApi = api.injectEndpoints({
       providesTags: ['Listing'],
     }),
     getStats: builder.query<{ totalUsers: number; totalListings: number }, void>({
-      query: () => 'stats',
+      query: () => 'listings/stats',
       providesTags: ['Listing'],
     }),
   }),
