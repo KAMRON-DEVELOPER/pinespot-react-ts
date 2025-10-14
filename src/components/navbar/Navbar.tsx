@@ -1,23 +1,14 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '@/features/auth/authSlice';
 import { Button } from '@/components/ui/button';
 import Notification from './Notification';
 import { AvatarMenu } from './AvatarMenu';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import CountrySelector from './CountrySelector';
 
 export default function Navbar() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
-  const [params] = useSearchParams();
-  const navigate = useNavigate();
-
-  const currency = params.get('currency') || 'USD';
-  const setCurrency = (v: string) => {
-    const p = new URLSearchParams(params);
-    p.set('currency', v);
-    navigate({ pathname: '/', search: p.toString() });
-  };
 
   console.log(`${user?.picture}`);
 
@@ -30,20 +21,7 @@ export default function Navbar() {
       </Link>
 
       <div className='flex items-center gap-3'>
-        <div className='hidden md:block'>
-          <Select
-            value={currency}
-            onValueChange={setCurrency}>
-            <SelectTrigger className='w-[100px]'>
-              <SelectValue placeholder='Currency' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='USD'>$ USD</SelectItem>
-              <SelectItem value='EUR'>€ EUR</SelectItem>
-              <SelectItem value='UZS'>UZS</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <CountrySelector />
 
         {isAuthenticated ? (
           <>

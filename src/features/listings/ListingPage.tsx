@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetListingsQuery } from '@/services/listing';
 import { isListingResponse } from '@/features/guards';
-import FiltersBar, { type Filters } from '@/components/filter/FiltersBar';
+import FilterSection, { type Filters } from '@/components/filter/FilterSection';
 import { ListingCard } from '@/components/listings/ListingCard';
 import Hero from './Hero';
 
@@ -10,15 +10,24 @@ export default function ListingPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
 
-  // 1. Parse all params to filters with stable defaults
   const filters = useMemo<Filters>(() => {
     return {
-      minBeds: Number(params.get('minBeds')),
-      minBaths: Number(params.get('minBaths')),
-      maxPrice: params.get('maxPrice') ? Number(params.get('maxPrice')) : undefined,
-      sort: (params.get('sort') as Filters['sort']) ?? 'newest',
-      condition: (params.get('condition') as Filters['condition']) ?? 'any',
       q: params.get('q') ?? '',
+      sort: params.get('sort') ? (params.get('sort') as Filters['sort']) : 'newest',
+      country: params.get('country') ?? '',
+      maxPrice: params.get('maxPrice') ? Number(params.get('maxPrice')) : undefined,
+      minRooms: params.get('minRooms') ? Number(params.get('minRooms')) : undefined,
+      minBeds: params.get('minBeds') ? Number(params.get('minBeds')) : undefined,
+      minBaths: params.get('minBaths') ? Number(params.get('minBaths')) : undefined,
+      minArea: params.get('minArea') ? Number(params.get('minArea')) : undefined,
+      floor: params.get('floor') ? Number(params.get('floor')) : undefined,
+      hasElevator: params.get('hasElevator') ? Boolean(params.get('hasElevator')) : undefined,
+      condition: params.get('condition') ? (params.get('condition') as Filters['condition']) : 'any',
+      saleType: params.get('saleType') ? (params.get('saleType') as Filters['saleType']) : 'rent',
+      hasGarden: params.get('hasGarden') ? Boolean(params.get('hasGarden')) : undefined,
+      maxDistanceToKindergarten: params.get('distanceToKindergarten') ? Number(params.get('distanceToKindergarten')) : undefined,
+      maxDistanceToSchool: params.get('distanceToSchool') ? Number(params.get('distanceToSchool')) : undefined,
+      maxDistanceToHospital: params.get('distanceToHospital') ? Number(params.get('distanceToHospital')) : undefined,
     };
   }, [params]);
 
@@ -92,7 +101,7 @@ export default function ListingPage() {
       <Hero />
 
       {/* Filters */}
-      <FiltersBar
+      <FilterSection
         value={filters}
         onChange={handleFilterChange}
         onReset={handleReset}

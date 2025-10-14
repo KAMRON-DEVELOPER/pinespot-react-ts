@@ -1,21 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 
 export type Filters = {
+  q?: string;
+  sort: 'cheap' | 'expensive' | 'newest';
+  country: string;
+  maxPrice?: number;
+  minRooms?: number;
   minBeds?: number;
   minBaths?: number;
-  maxPrice?: number;
-  sort?: 'cheap' | 'expensive' | 'newest';
-  condition?: 'old' | 'new' | 'repaired' | 'any';
-  q?: string;
+  minArea?: number;
+  apartmentFloor?: number;
+  totalBuildingFloors?: number;
+  condition: 'old' | 'new' | 'repaired' | 'any';
+  saleType: 'rent' | 'buy';
+  furnished?: boolean;
+  petsAllowed?: boolean;
+  hasElevator?: boolean;
+  hasGarden?: boolean;
+  hasParking?: boolean;
+  hasBalcony?: boolean;
+  hasAc?: boolean;
+  hasHeating?: boolean;
+  maxDistanceToKindergarten?: number;
+  maxDistanceToSchool?: number;
+  maxDistanceToHospital?: number;
+  maxDistanceToMetro?: number;
+  maxDistanceToBusStop?: number;
+  maxDistanceToShopping?: number;
 };
 
 type Props = {
   value: Filters;
   onChange: (v: Filters) => void;
-  onReset?: () => void;
+  onReset: () => void;
 };
 
-export default function FiltersBar({ value, onChange, onReset }: Props) {
+export default function FilterSection({ value, onChange, onReset }: Props) {
   const [localQ, setLocalQ] = useState(value.q ?? '');
   const debounceRef = useRef<number | null>(null);
 
@@ -102,7 +122,7 @@ export default function FiltersBar({ value, onChange, onReset }: Props) {
           </option>
         </select>
         <button
-          onClick={() => onReset && onReset()}
+          onClick={() => onReset()}
           className='px-3 py-2 bg-gray-100 rounded-md'
           aria-label='Reset filters'>
           Reset
