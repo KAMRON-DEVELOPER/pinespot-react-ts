@@ -3,7 +3,7 @@ import { api } from './api';
 
 export const listingApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getListings: builder.query<GetListingsResponse, Record<string, any> | void>({
+    getListings: builder.query<GetListingsResponse, Record<string, string> | void>({
       query: (params) => {
         const qs = new URLSearchParams();
         if (params) {
@@ -17,7 +17,11 @@ export const listingApi = api.injectEndpoints({
       },
       providesTags: ['Listing'],
     }),
+    getStats: builder.query<{ totalUsers: number; totalListings: number }, void>({
+      query: () => 'stats',
+      providesTags: ['Listing'],
+    }),
   }),
 });
 
-export const { useGetListingsQuery } = listingApi;
+export const { useGetListingsQuery, useGetStatsQuery } = listingApi;

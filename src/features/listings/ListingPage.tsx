@@ -1,21 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetListingsQuery } from '@/services/listing';
 import { isListingResponse } from '@/features/guards';
-import { FiltersBar, type Filters } from '@/components/filter/FiltersBar';
+import FiltersBar, { type Filters } from '@/components/filter/FiltersBar';
 import { ListingCard } from '@/components/listings/ListingCard';
-import { motion, animate } from 'framer-motion';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectStats, setStats } from './statsSlice';
-import type { Listing } from '../types';
 import Hero from './Hero';
 
 export default function ListingPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const dispatch = useDispatch();
 
-  // parse params to filters with stable defaults
+  // 1. Parse all params to filters with stable defaults
   const filters = useMemo<Filters>(() => {
     return {
       minBeds: Number(params.get('minBeds') ?? 0),
@@ -23,13 +18,23 @@ export default function ListingPage() {
       maxPrice: params.get('maxPrice') ? Number(params.get('maxPrice')) : undefined,
       sort: (params.get('sort') as Filters['sort']) ?? 'price-asc',
       condition: (params.get('condition') as Filters['condition']) ?? 'any',
-      // optional: include search query param
-      // q: params.get('q') ?? '',
+      q: params.get('q') ?? '',
     };
   }, [params]);
 
-  // query will automatically refetch when `filters` object changes (different keys/values)
-  const { data, isLoading, isError } = useGetListingsQuery(filters);
+  const queryParams = useMemo(() => {
+    const q: Record<string, string> = {};
+    if (filters.minBeds) q.minBeds = String(filters.minBeds);
+    if (filters.minBaths) q.minBaths = String(filters.minBaths);
+    if (filters.maxPrice !== undefined) q.maxPrice = String(filters.maxPrice);
+    if (filters.sort) q.sort = filters.sort;
+    if (filters.condition) q.condition = filters.condition;
+    if (filters.q) q.q = filters.q;
+    return q;
+  }, [filters]);
+
+  // This query will automatically refetch when the `filters` object changes
+  const { data, isLoading, isError } = useGetListingsQuery(queryParams);
 
   const handleFilterChange = (v: Filters) => {
     const p = new URLSearchParams(params);
@@ -39,7 +44,14 @@ export default function ListingPage() {
     else p.delete('maxPrice');
     p.set('sort', v.sort ?? 'price-asc');
     p.set('condition', v.condition ?? 'any');
-    // replace to avoid history flood and keep the UI stable
+
+    if (v.q) {
+      p.set('q', v.q);
+    } else {
+      p.delete('q');
+    }
+
+    // Replace history entry to avoid flooding browser history
     navigate({ pathname: '/', search: p.toString() }, { replace: true });
   };
 
@@ -50,11 +62,40 @@ export default function ListingPage() {
     p.delete('maxPrice');
     p.delete('sort');
     p.delete('condition');
+    p.delete('q');
     navigate({ pathname: '/', search: p.toString() }, { replace: true });
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!data || !isListingResponse(data)) return <p>No listings available</p>;
+  if (isLoading) {
+    return (
+      <div className='px-2 md:px-6 py-2 md:pt-6 space-y-6'>
+        <Hero />
+        <div className='flex items-center justify-center h-64'>
+          <p className='text-lg text-muted-foreground'>Loading listings...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data || !isListingResponse(data)) {
+    return (
+      <div className='px-2 md:px-6 py-2 md:pt-6 space-y-6'>
+        <Hero />
+        <div className='flex items-center justify-center h-64'>
+          <p className='text-lg text-destructive'>Failed to load listings. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { listings, total } = data;
+  const hasActiveFilters =
+    filters.minBeds > 0 ||
+    filters.minBaths > 0 ||
+    filters.maxPrice !== undefined ||
+    filters.q !== '' ||
+    filters.condition !== 'any' ||
+    filters.sort !== 'price-asc';
 
   return (
     <div className='px-2 md:px-6 py-2 md:pt-6 space-y-6'>
@@ -68,23 +109,40 @@ export default function ListingPage() {
         onReset={handleReset}
       />
 
-      {/* Search results | hint */}
-      <div className='flex items-center justify-between'>
+      {/* Search hint / Results summary */}
+      <div className='flex items-center justify-between border-b pb-3'>
         <div>
           <h2 className='text-xl font-semibold'>
-            {filtered.length} apartments {q && <span className='text-muted-foreground'>for "{q}"</span>}
+            {listings.length} {listings.length === 1 ? 'apartment' : 'apartments'}
+            {filters.q && <span className='text-muted-foreground'> for "{filters.q}"</span>}
           </h2>
-          {country && country !== 'all' && <p className='text-sm text-muted-foreground'>Country: {country}</p>}
-          <p>found {data.total} listing</p>
+          <p className='text-sm text-muted-foreground mt-1'>
+            {hasActiveFilters ? (
+              <>
+                Showing {listings.length} of {total} total listings (filtered)
+              </>
+            ) : (
+              <>
+                Total of {total} {total === 1 ? 'listing' : 'listings'} available
+              </>
+            )}
+          </p>
         </div>
       </div>
 
       {/* Listing results */}
-      {isLoading ? (
-        <div>Loading…</div>
+      {listings.length === 0 ? (
+        <div className='flex flex-col items-center justify-center h-64 space-y-4'>
+          <p className='text-lg text-muted-foreground'>No apartments found matching your criteria.</p>
+          <button
+            onClick={handleReset}
+            className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition'>
+            Clear all filters
+          </button>
+        </div>
       ) : (
         <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {data.listings.map((l) => (
+          {listings.map((l) => (
             <ListingCard
               key={l.id}
               listing={l}

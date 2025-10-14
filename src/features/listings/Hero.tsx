@@ -1,9 +1,18 @@
 import { motion } from 'motion/react';
-import { selectStats } from './statsSlice';
+import { selectStats, setStats } from './statsSlice';
 import { useSelector } from 'react-redux';
+import { useGetStatsQuery } from '@/services/listing';
+import { useEffect } from 'react';
+import { useAppDispatch } from '@/store/store';
 
 const Hero = () => {
+  const dispatch = useAppDispatch();
   const { totalUsers, totalListings } = useSelector(selectStats);
+  const { data } = useGetStatsQuery();
+
+  useEffect(() => {
+    if (data) dispatch(setStats(data));
+  }, [data, dispatch]);
 
   return (
     <section className='flex flex-col md:flex-row gap-6 items-center'>
