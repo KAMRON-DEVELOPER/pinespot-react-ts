@@ -57,9 +57,10 @@ export interface ErrorResponse {
   error: string;
 }
 
-export type ApiResponse<T> = T | ErrorResponse | RedirectResponse;
+export type ApiResponseWithRedirect<T> = T | ErrorResponse | RedirectResponse;
+export type ApiResponse<T> = T | ErrorResponse;
 
-export type GetUserResponse = ApiResponse<User>;
+export type GetUserResponse = ApiResponseWithRedirect<User>;
 export type UpdateUserResponse = User | ErrorResponse;
 export type DeleteUserResponse = User | ErrorResponse;
 export type GetOAuthUserResponse = OAuthUser | ErrorResponse | RedirectResponse;
@@ -142,4 +143,4 @@ export type Country = {
   code: string;
 };
 
-export type GetListingsResponse = ApiResponse<ListingResponse>;
+export type GetListingsResponse = ApiResponseWithRedirect<ListingResponse>;

@@ -10,19 +10,19 @@ import type {
 import { api } from './api';
 
 export const authApi = api.injectEndpoints({
-  endpoints: (build) => ({
-    getProfile: build.query<GetUserResponse, void>({
+  endpoints: (builder) => ({
+    getProfile: builder.query<GetUserResponse, void>({
       query: () => '/profile',
     }),
-    updateProfile: build.mutation<UpdateUserResponse, User>({
+    updateProfile: builder.mutation<UpdateUserResponse, User>({
       query: (body) => ({ url: '/profile', method: 'PATCH', body: body }),
       invalidatesTags: ['Auth'],
     }),
-    deleteProfile: build.mutation<void, void>({
+    deleteProfile: builder.mutation<void, void>({
       query: () => ({ url: '/profile', method: 'DELETE' }),
       invalidatesTags: ['Auth'],
     }),
-    continueWithEmail: build.mutation<ContinueWithEmailResponse, { email: string; password: string }>({
+    continueWithEmail: builder.mutation<ContinueWithEmailResponse, { email: string; password: string }>({
       query: (body) => ({
         url: '/auth/email',
         method: 'POST',
@@ -30,11 +30,11 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-    getOAuthUser: build.query<GetOAuthUserResponse, void>({
+    getOAuthUser: builder.query<GetOAuthUserResponse, void>({
       query: () => '/auth/user',
       providesTags: ['Auth'],
     }),
-    completeProfile: build.mutation<CompleteProfileResponse, FormData>({
+    completeProfile: builder.mutation<CompleteProfileResponse, FormData>({
       query: (body) => ({
         url: '/auth/complete',
         method: 'PATCH',
@@ -42,13 +42,13 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-    refreshToken: build.mutation<RefreshTokenResponse, void>({
+    refreshToken: builder.mutation<RefreshTokenResponse, void>({
       query: () => ({
         url: '/auth/refresh',
         method: 'POST',
       }),
     }),
-    logout: build.mutation<void, void>({
+    logout: builder.mutation<void, void>({
       query: () => ({
         url: '/auth/logout',
         method: 'POST',

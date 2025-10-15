@@ -5,12 +5,11 @@ import { Button } from '@/components/ui/button';
 import Notification from './Notification';
 import { AvatarMenu } from './AvatarMenu';
 import CountrySelector from './CountrySelector';
+import { Plus } from 'lucide-react';
 
 export default function Navbar() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
-
-  console.log(`${user?.picture}`);
 
   return (
     <nav className='relative flex items-center justify-between px-2 md:px-6 py-2 bg-background border-b'>
@@ -25,6 +24,16 @@ export default function Navbar() {
 
         {isAuthenticated ? (
           <>
+            <Button
+              asChild
+              size='icon'
+              className='rounded-full'
+              aria-label='Add Listing'
+              title='Add Listing'>
+              <Link to='/listings/new'>
+                <Plus className='h-5 w-5' />
+              </Link>
+            </Button>
             <Notification />
             <AvatarMenu user={user} />
           </>

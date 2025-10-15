@@ -124,7 +124,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
             {localQ && (
               <button
                 onClick={() => setLocalQ('')}
-                className='absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded'
+                className='absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded'
                 aria-label='Clear search'>
                 <X className='h-4 w-4' />
               </button>
@@ -162,7 +162,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
 
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition ${showAdvanced ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'}`}>
+          className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition ${showAdvanced ? 'bg-primary/10 border-primary/30' : 'hover:bg-accent'}`}>
           <Filter className='h-4 w-4' />
           Advanced
           {activeFilterCount() > 0 && <span className='bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full'>{activeFilterCount()}</span>}
@@ -172,7 +172,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
         {activeFilterCount() > 0 && (
           <button
             onClick={onReset}
-            className='px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg'>
+            className='px-3 py-2 text-destructive hover:bg-destructive/10 rounded-lg'>
             Reset all
           </button>
         )}
@@ -180,12 +180,12 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
 
       {/* Advanced Filters Panel */}
       {showAdvanced && (
-        <div className='border rounded-lg p-4 bg-gray-50 space-y-4'>
+        <div className='border rounded-lg p-4 bg-card space-y-4'>
           {/* Property Details Section */}
           <div className='border-b pb-2'>
             <button
               onClick={() => toggleSection('property')}
-              className='w-full flex items-center justify-between py-2 hover:bg-gray-100 rounded px-2'>
+              className='w-full flex items-center justify-between py-2 hover:bg-accent rounded px-2'>
               <span className='flex items-center gap-2 font-semibold'>
                 <Home className='h-4 w-4' />
                 Property Details
@@ -196,7 +196,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
             {expandedSections.has('property') && (
               <div className='grid grid-cols-2 md:grid-cols-4 gap-3 mt-3'>
                 <div>
-                  <label className='text-sm text-gray-600'>Min Rooms</label>
+                  <label className='text-sm text-muted-foreground'>Min Rooms</label>
                   <input
                     type='number'
                     value={value.minRooms ?? ''}
@@ -206,7 +206,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Min Area (m²)</label>
+                  <label className='text-sm text-muted-foreground'>Min Area (m²)</label>
                   <input
                     type='number'
                     value={value.minArea ?? ''}
@@ -216,7 +216,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Floor</label>
+                  <label className='text-sm text-muted-foreground'>Floor</label>
                   <input
                     type='number'
                     value={value.apartmentFloor ?? ''}
@@ -226,7 +226,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Building Floors</label>
+                  <label className='text-sm text-muted-foreground'>Building Floors</label>
                   <input
                     type='number'
                     value={value.totalBuildingFloors ?? ''}
@@ -236,7 +236,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Condition</label>
+                  <label className='text-sm text-muted-foreground'>Condition</label>
                   <select
                     value={value.condition}
                     onChange={(e) => onChange({ ...value, condition: e.target.value as ListingParams['condition'] })}
@@ -253,7 +253,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
           <div className='border-b pb-2'>
             <button
               onClick={() => toggleSection('amenities')}
-              className='w-full flex items-center justify-between py-2 hover:bg-gray-100 rounded px-2'>
+              className='w-full flex items-center justify-between py-2 hover:bg-accent rounded px-2'>
               <span className='font-semibold'>Amenities</span>
               {expandedSections.has('amenities') ? <ChevronUp className='h-4 w-4' /> : <ChevronDown className='h-4 w-4' />}
             </button>
@@ -322,7 +322,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
           <div>
             <button
               onClick={() => toggleSection('proximity')}
-              className='w-full flex items-center justify-between py-2 hover:bg-gray-100 rounded px-2'>
+              className='w-full flex items-center justify-between py-2 hover:bg-accent rounded px-2'>
               <span className='flex items-center gap-2 font-semibold'>
                 <MapPin className='h-4 w-4' />
                 Nearby Facilities (max distance in meters)
@@ -333,7 +333,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
             {expandedSections.has('proximity') && (
               <div className='grid grid-cols-2 md:grid-cols-3 gap-3 mt-3'>
                 <div>
-                  <label className='text-sm text-gray-600 flex items-center gap-1'>
+                  <label className='text-sm text-muted-foreground flex items-center gap-1'>
                     <School className='h-3 w-3' />
                     Kindergarten
                   </label>
@@ -347,7 +347,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600 flex items-center gap-1'>
+                  <label className='text-sm text-muted-foreground flex items-center gap-1'>
                     <School className='h-3 w-3' />
                     School
                   </label>
@@ -361,7 +361,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Hospital</label>
+                  <label className='text-sm text-muted-foreground'>Hospital</label>
                   <input
                     type='number'
                     value={value.maxDistanceToHospital ?? ''}
@@ -372,7 +372,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600 flex items-center gap-1'>
+                  <label className='text-sm text-muted-foreground flex items-center gap-1'>
                     <Car className='h-3 w-3' />
                     Metro
                   </label>
@@ -386,7 +386,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Bus Stop</label>
+                  <label className='text-sm text-muted-foreground'>Bus Stop</label>
                   <input
                     type='number'
                     value={value.maxDistanceToBusStop ?? ''}
@@ -397,7 +397,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   />
                 </div>
                 <div>
-                  <label className='text-sm text-gray-600'>Shopping</label>
+                  <label className='text-sm text-muted-foreground'>Shopping</label>
                   <input
                     type='number'
                     value={value.maxDistanceToShopping ?? ''}

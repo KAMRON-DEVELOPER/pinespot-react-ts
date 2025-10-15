@@ -10,6 +10,8 @@ import ProfilePage from '@/features/auth/ProfilePage';
 // import { APIProvider } from '@vis.gl/react-google-maps';
 // import { GOOGLE_MAPS_API_KEY } from '@/consts';
 import ChatPage from '@/features/chat/ChatPage';
+import WishlistPage from '@/features/wishlist/WishlistPage';
+import SettingsPage from '@/features/settings/SettingsPage';
 
 function App() {
   const routes: RouteObject[] = [
@@ -32,6 +34,8 @@ function App() {
             { path: '/listings/new', element: <NewListingPage /> },
             { path: '/profile', element: <ProfilePage /> },
             { path: '/chats', element: <ChatPage /> },
+            { path: '/wishlists', element: <WishlistPage /> },
+            { path: '/settings', element: <SettingsPage /> },
           ],
         },
       ],

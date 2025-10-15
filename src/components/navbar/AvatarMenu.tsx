@@ -36,8 +36,6 @@ export function AvatarMenu({ user }: { user: User | null }) {
 
   if (!user) return null;
 
-  console.log(`${S3_URL}/${user.picture}`);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -64,31 +62,25 @@ export function AvatarMenu({ user }: { user: User | null }) {
             </Link>
           </DropdownMenuItem>
           {/* wishlist */}
-          <DropdownMenuItem
-            onSelect={preventClose}
-            className='flex justify-between'>
-            <div className='flex items-center'>
+          <DropdownMenuItem asChild>
+            <Link to='/wishlists' className='flex items-center'>
               <Heart className='mr-2 h-4 w-4' />
               <span>Wishlists</span>
-            </div>
+            </Link>
           </DropdownMenuItem>
           {/* chat */}
-          <DropdownMenuItem
-            onSelect={preventClose}
-            className='flex justify-between'>
-            <div className='flex items-center'>
+          <DropdownMenuItem asChild>
+            <Link to='/chats' className='flex items-center'>
               <MessageCircle className='mr-2 h-4 w-4' />
               <span>Chats</span>
-            </div>
+            </Link>
           </DropdownMenuItem>
           {/* settings */}
-          <DropdownMenuItem
-            onSelect={preventClose}
-            className='flex justify-between'>
-            <div className='flex items-center'>
+          <DropdownMenuItem asChild>
+            <Link to='/settings' className='flex items-center'>
               <Settings className='mr-2 h-4 w-4' />
               <span>Settings</span>
-            </div>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         {/* separator */}

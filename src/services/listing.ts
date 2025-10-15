@@ -1,4 +1,4 @@
-import type { GetListingsResponse } from '@/features/types';
+import type { ApiResponse, GetListingsResponse } from '@/features/types';
 import { api } from './api';
 import type { ListingParams } from '@/components/filter/AdvancedFilters';
 
@@ -18,6 +18,14 @@ export const listingApi = api.injectEndpoints({
       },
       providesTags: ['Listing'],
     }),
+    createListing: builder.mutation<ApiResponse<{ message: string }>, FormData>({
+      query: (body) => ({
+        url: '/listings',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Listing'],
+    }),
     getStats: builder.query<{ totalUsers: number; totalListings: number }, void>({
       query: () => 'listings/stats',
       providesTags: ['Listing'],
@@ -25,4 +33,4 @@ export const listingApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetListingsQuery, useGetStatsQuery } = listingApi;
+export const { useGetListingsQuery, useGetStatsQuery, useCreateListingMutation } = listingApi;
