@@ -78,7 +78,7 @@ export function AvatarMenu({ user }: { user: User | null }) {
             className='flex justify-between'>
             <div className='flex items-center'>
               <MessageCircle className='mr-2 h-4 w-4' />
-              <span>Cats</span>
+              <span>Chats</span>
             </div>
           </DropdownMenuItem>
           {/* settings */}

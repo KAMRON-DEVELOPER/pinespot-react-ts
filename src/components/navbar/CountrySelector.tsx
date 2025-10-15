@@ -1,13 +1,15 @@
 import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { COUNTRIES } from '@/consts';
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const CountrySelector = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState('Uzbekistan');
+  const [params, setParams] = useSearchParams();
+  const [selected, setSelected] = useState(params.get('country') || 'Uzbekistan');
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,6 +22,12 @@ const CountrySelector = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // keep selected label in sync with URL param changes
+  useEffect(() => {
+    const urlCountry = params.get('country') || 'Uzbekistan';
+    if (urlCountry !== selected) setSelected(urlCountry);
+  }, [params, selected]);
 
   const filteredCountries = useMemo(() => COUNTRIES.filter((c) => c.name.toLowerCase().includes(query.toLowerCase())), [query]);
 
@@ -49,6 +57,9 @@ const CountrySelector = () => {
                 key={country.code}
                 onClick={() => {
                   setSelected(country.name);
+                  const p = new URLSearchParams(params);
+                  p.set('country', country.name);
+                  setParams(p, { replace: true });
                   setOpen(false);
                   setQuery('');
                 }}

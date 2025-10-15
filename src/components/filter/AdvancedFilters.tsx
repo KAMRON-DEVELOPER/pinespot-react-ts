@@ -1,7 +1,7 @@
 import { Car, ChevronDown, ChevronUp, Filter, Home, MapPin, School, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-export type Filters = {
+export type ListingParams = {
   q?: string;
   sort: 'cheap' | 'expensive' | 'newest';
   country: string;
@@ -31,8 +31,8 @@ export type Filters = {
 };
 
 type Props = {
-  value: Filters;
-  onChange: (v: Filters) => void;
+  value: ListingParams;
+  onChange: (v: ListingParams) => void;
   onReset: () => void;
   country?: string;
 };
@@ -68,6 +68,15 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
     }
   }, [country, value, onChange]);
 
+  useEffect(() => {
+    if (showAdvanced && expandedSections.size === 0) {
+      const initial = new Set<string>();
+      initial.add('property');
+      initial.add('amenities');
+      setExpandedSections(initial);
+    }
+  }, [showAdvanced, expandedSections.size]);
+
   const toggleSection = (section: string) => {
     const newExpanded = new Set(expandedSections);
     if (newExpanded.has(section)) {
@@ -78,12 +87,12 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
     setExpandedSections(newExpanded);
   };
 
-  const handleNumericChange = (key: keyof Filters, raw: string) => {
+  const handleNumericChange = (key: keyof ListingParams, raw: string) => {
     const v = raw === '' ? undefined : Number(raw);
     onChange({ ...value, [key]: v });
   };
 
-  const handleBooleanChange = (key: keyof Filters, checked: boolean) => {
+  const handleBooleanChange = (key: keyof ListingParams, checked: boolean) => {
     onChange({ ...value, [key]: checked || undefined });
   };
 
@@ -96,7 +105,6 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
     if (value.minBaths) count++;
     if (value.minArea) count++;
     if (value.condition !== 'any') count++;
-    // Add more as needed
     return count;
   };
 
@@ -145,13 +153,11 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
 
         <select
           value={value.sort}
-          onChange={(e) => onChange({ ...value, sort: e.target.value as Filters['sort'] })}
+          onChange={(e) => onChange({ ...value, sort: e.target.value as ListingParams['sort'] })}
           className='px-3 py-2 border rounded-lg'>
           <option value='newest'>Newest</option>
           <option value='cheap'>Price ↑</option>
           <option value='expensive'>Price ↓</option>
-          <option value='area'>Area ↓</option>
-          <option value='rooms'>Rooms ↓</option>
         </select>
 
         <button
@@ -233,7 +239,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   <label className='text-sm text-gray-600'>Condition</label>
                   <select
                     value={value.condition}
-                    onChange={(e) => onChange({ ...value, condition: e.target.value as Filters['condition'] })}
+                    onChange={(e) => onChange({ ...value, condition: e.target.value as ListingParams['condition'] })}
                     className='w-full px-2 py-1 border rounded'>
                     <option value='any'>Any</option>
                     <option value='new'>New</option>
@@ -244,8 +250,6 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
               </div>
             )}
           </div>
-
-          {/* Amenities Section */}
           <div className='border-b pb-2'>
             <button
               onClick={() => toggleSection('amenities')}
