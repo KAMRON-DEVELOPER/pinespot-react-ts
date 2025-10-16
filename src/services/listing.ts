@@ -1,4 +1,4 @@
-import type { ApiResponse, GetListingsResponse } from '@/features/types';
+import type { ApiResponse, GetListingsResponse, Listing } from '@/features/types';
 import { api } from './api';
 import type { ListingParams } from '@/components/filter/AdvancedFilters';
 
@@ -26,6 +26,10 @@ export const listingApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Listing'],
     }),
+    getListingById: builder.query<ApiResponse<Listing>, string>({
+      query: (id) => `listings/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Listing', id }],
+    }),
     getStats: builder.query<{ totalUsers: number; totalListings: number }, void>({
       query: () => 'listings/stats',
       providesTags: ['Listing'],
@@ -33,4 +37,4 @@ export const listingApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetListingsQuery, useGetStatsQuery, useCreateListingMutation } = listingApi;
+export const { useGetListingsQuery, useGetStatsQuery, useCreateListingMutation, useGetListingByIdQuery } = listingApi;

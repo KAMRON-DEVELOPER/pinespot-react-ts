@@ -7,6 +7,7 @@ import CompleteProfilePage from '@/features/auth/CompleteProfilePage';
 import PersistLogin from '@/layouts/PersistLogin';
 import NewListingPage from '@/features/listings/NewListingPage';
 import ProfilePage from '@/features/auth/ProfilePage';
+import ListingDetailPage from '@/features/listings/ListingDetailPage';
 // import { APIProvider } from '@vis.gl/react-google-maps';
 // import { GOOGLE_MAPS_API_KEY } from '@/consts';
 import ChatPage from '@/features/chat/ChatPage';
@@ -31,6 +32,7 @@ function App() {
           errorElement: <ErrorPage />,
           children: [
             { path: '/', element: <ListingPage /> },
+            { path: '/listing/:id', element: <ListingDetailPage /> },
             { path: '/listings/new', element: <NewListingPage /> },
             { path: '/profile', element: <ProfilePage /> },
             { path: '/chats', element: <ChatPage /> },

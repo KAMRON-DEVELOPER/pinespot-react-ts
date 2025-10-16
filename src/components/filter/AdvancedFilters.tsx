@@ -1,5 +1,6 @@
 import { Car, ChevronDown, ChevronUp, Filter, Home, MapPin, School, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import CountrySelector from '@/components/navbar/CountrySelector';
 
 export type ListingParams = {
   q?: string;
@@ -119,7 +120,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
               placeholder='Search location, title, features...'
               value={localQ}
               onChange={(e) => setLocalQ(e.target.value)}
-              className='w-full px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+              className='w-full px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground'
             />
             {localQ && (
               <button
@@ -136,7 +137,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
         <select
           value={value.saleType}
           onChange={(e) => onChange({ ...value, saleType: e.target.value as 'rent' | 'buy' })}
-          className='px-3 py-2 border rounded-lg'>
+          className='px-3 py-2 border rounded-lg bg-background text-foreground'>
           <option value='rent'>Rent</option>
           <option value='buy'>Buy</option>
         </select>
@@ -147,14 +148,14 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
             placeholder='Max price'
             value={value.maxPrice ?? ''}
             onChange={(e) => handleNumericChange('maxPrice', e.target.value)}
-            className='w-28 px-3 py-2 border rounded-lg'
+            className='w-28 px-3 py-2 border rounded-lg bg-background text-foreground'
           />
         </div>
 
         <select
           value={value.sort}
           onChange={(e) => onChange({ ...value, sort: e.target.value as ListingParams['sort'] })}
-          className='px-3 py-2 border rounded-lg'>
+          className='px-3 py-2 border rounded-lg bg-background text-foreground'>
           <option value='newest'>Newest</option>
           <option value='cheap'>Price ↑</option>
           <option value='expensive'>Price ↓</option>
@@ -181,6 +182,17 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
       {/* Advanced Filters Panel */}
       {showAdvanced && (
         <div className='border rounded-lg p-4 bg-card space-y-4'>
+          {/* Country Selector moved from navbar */}
+          <div className='border-b pb-3'>
+            <div className='flex items-center justify-between'>
+              <span className='flex items-center gap-2 font-semibold'>
+                <MapPin className='h-4 w-4' /> Country
+              </span>
+            </div>
+            <div className='mt-2'>
+              <CountrySelector />
+            </div>
+          </div>
           {/* Property Details Section */}
           <div className='border-b pb-2'>
             <button
@@ -201,7 +213,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.minRooms ?? ''}
                     onChange={(e) => handleNumericChange('minRooms', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
                     min='1'
                   />
                 </div>
@@ -211,7 +223,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.minArea ?? ''}
                     onChange={(e) => handleNumericChange('minArea', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
                     min='1'
                   />
                 </div>
@@ -221,7 +233,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.apartmentFloor ?? ''}
                     onChange={(e) => handleNumericChange('apartmentFloor', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
                     min='0'
                   />
                 </div>
@@ -231,7 +243,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.totalBuildingFloors ?? ''}
                     onChange={(e) => handleNumericChange('totalBuildingFloors', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
                     min='0'
                   />
                 </div>
@@ -240,7 +252,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                   <select
                     value={value.condition}
                     onChange={(e) => onChange({ ...value, condition: e.target.value as ListingParams['condition'] })}
-                    className='w-full px-2 py-1 border rounded'>
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'>
                     <option value='any'>Any</option>
                     <option value='new'>New</option>
                     <option value='repaired'>Renovated</option>
@@ -265,7 +277,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='checkbox'
                     checked={value.hasElevator ?? false}
                     onChange={(e) => handleBooleanChange('hasElevator', e.target.checked)}
-                    className='rounded'
+                    className='rounded bg-background'
                   />
                   <span className='text-sm'>Elevator</span>
                 </label>
@@ -274,7 +286,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='checkbox'
                     checked={value.hasGarden ?? false}
                     onChange={(e) => handleBooleanChange('hasGarden', e.target.checked)}
-                    className='rounded'
+                    className='rounded bg-background'
                   />
                   <span className='text-sm'>Garden</span>
                 </label>
@@ -283,7 +295,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='checkbox'
                     checked={value.hasParking ?? false}
                     onChange={(e) => handleBooleanChange('hasParking', e.target.checked)}
-                    className='rounded'
+                    className='rounded bg-background'
                   />
                   <span className='text-sm'>Parking</span>
                 </label>
@@ -292,7 +304,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='checkbox'
                     checked={value.hasBalcony ?? false}
                     onChange={(e) => handleBooleanChange('hasBalcony', e.target.checked)}
-                    className='rounded'
+                    className='rounded bg-background'
                   />
                   <span className='text-sm'>Balcony</span>
                 </label>
@@ -301,7 +313,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='checkbox'
                     checked={value.furnished ?? false}
                     onChange={(e) => handleBooleanChange('furnished', e.target.checked)}
-                    className='rounded'
+                    className='rounded bg-background'
                   />
                   <span className='text-sm'>Furnished</span>
                 </label>
@@ -310,7 +322,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='checkbox'
                     checked={value.petsAllowed ?? false}
                     onChange={(e) => handleBooleanChange('petsAllowed', e.target.checked)}
-                    className='rounded'
+                    className='rounded bg-background'
                   />
                   <span className='text-sm'>Pets Allowed</span>
                 </label>
@@ -325,7 +337,7 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
               className='w-full flex items-center justify-between py-2 hover:bg-accent rounded px-2'>
               <span className='flex items-center gap-2 font-semibold'>
                 <MapPin className='h-4 w-4' />
-                Nearby Facilities (max distance in meters)
+                Nearby Facilities (max distance in km)
               </span>
               {expandedSections.has('proximity') ? <ChevronUp className='h-4 w-4' /> : <ChevronDown className='h-4 w-4' />}
             </button>
@@ -341,8 +353,9 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.maxDistanceToKindergarten ?? ''}
                     onChange={(e) => handleNumericChange('maxDistanceToKindergarten', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
-                    placeholder='500'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='0.5'
+                    step='any'
                     min='0'
                   />
                 </div>
@@ -355,8 +368,9 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.maxDistanceToSchool ?? ''}
                     onChange={(e) => handleNumericChange('maxDistanceToSchool', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
-                    placeholder='1000'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='1'
+                    step='any'
                     min='0'
                   />
                 </div>
@@ -366,8 +380,9 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.maxDistanceToHospital ?? ''}
                     onChange={(e) => handleNumericChange('maxDistanceToHospital', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
-                    placeholder='2000'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='2'
+                    step='any'
                     min='0'
                   />
                 </div>
@@ -380,8 +395,9 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.maxDistanceToMetro ?? ''}
                     onChange={(e) => handleNumericChange('maxDistanceToMetro', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
-                    placeholder='500'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='0.5'
+                    step='any'
                     min='0'
                   />
                 </div>
@@ -391,8 +407,9 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.maxDistanceToBusStop ?? ''}
                     onChange={(e) => handleNumericChange('maxDistanceToBusStop', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
-                    placeholder='200'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='0.2'
+                    step='any'
                     min='0'
                   />
                 </div>
@@ -402,8 +419,9 @@ export default function AdvancedFilterSection({ value, onChange, onReset, countr
                     type='number'
                     value={value.maxDistanceToShopping ?? ''}
                     onChange={(e) => handleNumericChange('maxDistanceToShopping', e.target.value)}
-                    className='w-full px-2 py-1 border rounded'
-                    placeholder='1000'
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='1'
+                    step='any'
                     min='0'
                   />
                 </div>

@@ -85,6 +85,15 @@ export interface Listing {
   updatedAt: string;
 }
 
+export interface ApartmentPicture {
+  id: string;
+  apartment_id: string;
+  url: string;
+  is_primary: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Apartment {
   id: string;
   title: string;
@@ -94,7 +103,7 @@ export interface Apartment {
   rooms: number;
   beds: number;
   baths: number;
-  images: string[];
+  pictures: ApartmentPicture[];
   amenities: string[];
   area: number;
   floor: number;
