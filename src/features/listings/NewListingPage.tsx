@@ -75,10 +75,6 @@ export default function NewListingPage() {
     });
   };
 
-  const removePicture = (index: number) => {
-    setPictures((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
@@ -134,11 +130,11 @@ export default function NewListingPage() {
     const fd = new FormData();
     fd.append('listing_data', JSON.stringify(listingData));
     pictures.forEach((file) => {
-      fd.append('pictures[]', file);
       fd.append('pictures', file);
     });
 
     try {
+      console.log(pictures.map((f) => ({ name: f.name, size: f.size })));
       const res = await createListing(fd).unwrap();
       if (typeof res === 'object' && 'message' in res) {
         setMessage(String((res as any).message));
@@ -156,111 +152,303 @@ export default function NewListingPage() {
       <div className='max-w-5xl mx-auto p-4 sm:p-6'>
         <h1 className='text-2xl font-semibold mb-4 text-foreground'>Add a New Listing</h1>
 
-        {message && (
-          <div className='mb-4 rounded-md border bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-200 px-4 py-2'>
-            {message}
-          </div>
-        )}
-        {errorMsg && (
-          <div className='mb-4 rounded-md border bg-destructive/10 text-destructive px-4 py-2'>
-            {errorMsg}
-          </div>
-        )}
+        {message && <div className='mb-4 rounded-md border bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-200 px-4 py-2'>{message}</div>}
+        {errorMsg && <div className='mb-4 rounded-md border bg-destructive/10 text-destructive px-4 py-2'>{errorMsg}</div>}
 
-        <form onSubmit={onSubmit} className='space-y-6'>
+        <form
+          onSubmit={onSubmit}
+          className='space-y-6'>
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
             <div className='lg:col-span-2 space-y-4'>
               <div className='border rounded-lg p-4 bg-card space-y-3'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Title' value={title} onChange={(e) => setTitle(e.target.value)} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Price (USD)' type='number' value={price} onChange={(e) => setPrice(e.target.value)} />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Title'
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Price (USD)'
+                    type='number'
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
                 </div>
-                <textarea className='w-full px-3 py-2 border rounded min-h-24 bg-background text-foreground' placeholder='Description' value={description} onChange={(e) => setDescription(e.target.value)} />
+                <textarea
+                  className='w-full px-3 py-2 border rounded min-h-24 bg-background text-foreground'
+                  placeholder='Description'
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
                 <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Rooms' type='number' value={rooms} onChange={(e) => setRooms(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Beds' type='number' value={beds} onChange={(e) => setBeds(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Baths' type='number' value={baths} onChange={(e) => setBaths(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Area (m²)' type='number' value={area} onChange={(e) => setArea(e.target.value === '' ? '' : Number(e.target.value))} />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Rooms'
+                    type='number'
+                    value={rooms}
+                    onChange={(e) => setRooms(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Beds'
+                    type='number'
+                    value={beds}
+                    onChange={(e) => setBeds(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Baths'
+                    type='number'
+                    value={baths}
+                    onChange={(e) => setBaths(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Area (m²)'
+                    type='number'
+                    value={area}
+                    onChange={(e) => setArea(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
                 </div>
                 <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Floor' type='number' value={apartmentFloor} onChange={(e) => setApartmentFloor(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Total Floors' type='number' value={totalBuildingFloors} onChange={(e) => setTotalBuildingFloors(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <select className='w-full px-3 py-2 border rounded bg-background text-foreground' value={condition} onChange={(e) => setCondition(e.target.value as ApartmentCondition)}>
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Floor'
+                    type='number'
+                    value={apartmentFloor}
+                    onChange={(e) => setApartmentFloor(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Total Floors'
+                    type='number'
+                    value={totalBuildingFloors}
+                    onChange={(e) => setTotalBuildingFloors(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <select
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    value={condition}
+                    onChange={(e) => setCondition(e.target.value as ApartmentCondition)}>
                     <option value='new'>New</option>
                     <option value='repaired'>Repaired</option>
                     <option value='old'>Old</option>
                   </select>
                 </div>
                 <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
-                  <select className='w-full px-3 py-2 border rounded bg-background text-foreground' value={saleType} onChange={(e) => setSaleType(e.target.value as SaleType)}>
+                  <select
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    value={saleType}
+                    onChange={(e) => setSaleType(e.target.value as SaleType)}>
                     <option value='rent'>Rent</option>
                     <option value='buy'>Buy</option>
                   </select>
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Requirements (optional)' value={requirements} onChange={(e) => setRequirements(e.target.value)} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Tags (comma separated)' value={tags} onChange={(e) => setTags(e.target.value)} />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Requirements (optional)'
+                    value={requirements}
+                    onChange={(e) => setRequirements(e.target.value)}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Tags (comma separated)'
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                  />
                 </div>
               </div>
 
               <div className='border rounded-lg p-4 bg-card space-y-3'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Street address' value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='City' value={city} onChange={(e) => setCity(e.target.value)} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='State/Region' value={stateOrRegion} onChange={(e) => setStateOrRegion(e.target.value)} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='County/District' value={countyOrDistrict} onChange={(e) => setCountyOrDistrict(e.target.value)} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Postal Code' value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Street address'
+                    value={streetAddress}
+                    onChange={(e) => setStreetAddress(e.target.value)}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='City'
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='State/Region'
+                    value={stateOrRegion}
+                    onChange={(e) => setStateOrRegion(e.target.value)}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='County/District'
+                    value={countyOrDistrict}
+                    onChange={(e) => setCountyOrDistrict(e.target.value)}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Postal Code'
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value)}
+                  />
                   <select
                     className='w-full px-3 py-2 border rounded bg-background text-foreground'
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  >
+                    onChange={(e) => setCountry(e.target.value)}>
                     {COUNTRIES.map((c) => (
-                      <option key={c.code} value={c.name}>
+                      <option
+                        key={c.code}
+                        value={c.name}>
                         {c.name}
                       </option>
                     ))}
                   </select>
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Latitude' type='number' step='any' value={latitude} onChange={(e) => setLatitude(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-3 py-2 border rounded bg-background text-foreground' placeholder='Longitude' type='number' step='any' value={longitude} onChange={(e) => setLongitude(e.target.value === '' ? '' : Number(e.target.value))} />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Latitude'
+                    type='number'
+                    step='any'
+                    value={latitude}
+                    onChange={(e) => setLatitude(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-3 py-2 border rounded bg-background text-foreground'
+                    placeholder='Longitude'
+                    type='number'
+                    step='any'
+                    value={longitude}
+                    onChange={(e) => setLongitude(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
                 </div>
               </div>
 
               <div className='border rounded-lg p-4 bg-card'>
                 <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={furnished} onChange={(e) => setFurnished(e.target.checked)} className='rounded bg-background text-foreground' /> Furnished
+                    <input
+                      type='checkbox'
+                      checked={furnished}
+                      onChange={(e) => setFurnished(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Furnished
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={petsAllowed} onChange={(e) => setPetsAllowed(e.target.checked)} className='rounded bg-background text-foreground' /> Pets Allowed
+                    <input
+                      type='checkbox'
+                      checked={petsAllowed}
+                      onChange={(e) => setPetsAllowed(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Pets Allowed
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={hasElevator} onChange={(e) => setHasElevator(e.target.checked)} className='rounded bg-background text-foreground' /> Elevator
+                    <input
+                      type='checkbox'
+                      checked={hasElevator}
+                      onChange={(e) => setHasElevator(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Elevator
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={hasGarden} onChange={(e) => setHasGarden(e.target.checked)} className='rounded bg-background text-foreground' /> Garden
+                    <input
+                      type='checkbox'
+                      checked={hasGarden}
+                      onChange={(e) => setHasGarden(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Garden
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={hasParking} onChange={(e) => setHasParking(e.target.checked)} className='rounded bg-background text-foreground' /> Parking
+                    <input
+                      type='checkbox'
+                      checked={hasParking}
+                      onChange={(e) => setHasParking(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Parking
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={hasBalcony} onChange={(e) => setHasBalcony(e.target.checked)} className='rounded bg-background text-foreground' /> Balcony
+                    <input
+                      type='checkbox'
+                      checked={hasBalcony}
+                      onChange={(e) => setHasBalcony(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Balcony
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={hasAc} onChange={(e) => setHasAc(e.target.checked)} className='rounded bg-background text-foreground' /> AC
+                    <input
+                      type='checkbox'
+                      checked={hasAc}
+                      onChange={(e) => setHasAc(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    AC
                   </label>
                   <label className='flex items-center gap-2 text-sm'>
-                    <input type='checkbox' checked={hasHeating} onChange={(e) => setHasHeating(e.target.checked)} className='rounded bg-background text-foreground' /> Heating
+                    <input
+                      type='checkbox'
+                      checked={hasHeating}
+                      onChange={(e) => setHasHeating(e.target.checked)}
+                      className='rounded bg-background text-foreground'
+                    />{' '}
+                    Heating
                   </label>
                 </div>
               </div>
 
               <div className='border rounded-lg p-4 bg-card'>
                 <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
-                  <input className='w-full px-2 py-1 border rounded bg-background text-foreground' placeholder='Kindergarten (km)' type='number' step='any' value={distanceToKindergarten} onChange={(e) => setDistanceToKindergarten(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-2 py-1 border rounded bg-background text-foreground' placeholder='School (km)' type='number' step='any' value={distanceToSchool} onChange={(e) => setDistanceToSchool(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-2 py-1 border rounded bg-background text-foreground' placeholder='Hospital (km)' type='number' step='any' value={distanceToHospital} onChange={(e) => setDistanceToHospital(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-2 py-1 border rounded bg-background text-foreground' placeholder='Metro (km)' type='number' step='any' value={distanceToMetro} onChange={(e) => setDistanceToMetro(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-2 py-1 border rounded bg-background text-foreground' placeholder='Bus Stop (km)' type='number' step='any' value={distanceToBusStop} onChange={(e) => setDistanceToBusStop(e.target.value === '' ? '' : Number(e.target.value))} />
-                  <input className='w-full px-2 py-1 border rounded bg-background text-foreground' placeholder='Shopping (km)' type='number' step='any' value={distanceToShopping} onChange={(e) => setDistanceToShopping(e.target.value === '' ? '' : Number(e.target.value))} />
+                  <input
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='Kindergarten (km)'
+                    type='number'
+                    step='any'
+                    value={distanceToKindergarten}
+                    onChange={(e) => setDistanceToKindergarten(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='School (km)'
+                    type='number'
+                    step='any'
+                    value={distanceToSchool}
+                    onChange={(e) => setDistanceToSchool(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='Hospital (km)'
+                    type='number'
+                    step='any'
+                    value={distanceToHospital}
+                    onChange={(e) => setDistanceToHospital(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='Metro (km)'
+                    type='number'
+                    step='any'
+                    value={distanceToMetro}
+                    onChange={(e) => setDistanceToMetro(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='Bus Stop (km)'
+                    type='number'
+                    step='any'
+                    value={distanceToBusStop}
+                    onChange={(e) => setDistanceToBusStop(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                  <input
+                    className='w-full px-2 py-1 border rounded bg-background text-foreground'
+                    placeholder='Shopping (km)'
+                    type='number'
+                    step='any'
+                    value={distanceToShopping}
+                    onChange={(e) => setDistanceToShopping(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
                 </div>
               </div>
             </div>
@@ -326,9 +514,12 @@ export default function NewListingPage() {
                         onDragEnd={() => setDragIndex(null)}
                         aria-dropeffect='move'
                         aria-grabbed={dragIndex === idx}
-                        title='Drag to reorder'
-                      >
-                        <img src={URL.createObjectURL(file)} alt={`pic-${idx}`} className='h-24 w-full object-cover' />
+                        title='Drag to reorder'>
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`pic-${idx}`}
+                          className='h-24 w-full object-cover'
+                        />
                       </div>
                     ))}
                   </div>
@@ -350,21 +541,38 @@ export default function NewListingPage() {
                       }
                     }}
                   />
-                  <Button type='button' onClick={() => { addAmenity(amenityInput); setAmenityInput(''); }}>Add</Button>
+                  <Button
+                    type='button'
+                    onClick={() => {
+                      addAmenity(amenityInput);
+                      setAmenityInput('');
+                    }}>
+                    Add
+                  </Button>
                 </div>
                 {amenities.length > 0 && (
                   <div className='flex flex-wrap gap-2'>
                     {amenities.map((a) => (
-                      <span key={a} className='px-2 py-1 text-xs rounded-full bg-accent text-accent-foreground flex items-center gap-1'>
+                      <span
+                        key={a}
+                        className='px-2 py-1 text-xs rounded-full bg-accent text-accent-foreground flex items-center gap-1'>
                         {a}
-                        <button type='button' onClick={() => removeAmenity(a)} className='hover:text-destructive'>×</button>
+                        <button
+                          type='button'
+                          onClick={() => removeAmenity(a)}
+                          className='hover:text-destructive'>
+                          ×
+                        </button>
                       </span>
                     ))}
                   </div>
                 )}
               </div>
               <div className='border rounded-lg p-4 bg-card'>
-                <Button type='submit' disabled={isLoading} className='w-full'>
+                <Button
+                  type='submit'
+                  disabled={isLoading}
+                  className='w-full'>
                   {isLoading ? 'Saving...' : 'Save Listing'}
                 </Button>
               </div>
